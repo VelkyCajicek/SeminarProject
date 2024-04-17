@@ -334,7 +334,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.4745098, g: 0.19215688, b: 0.19825861, a: 0}
+  m_BackGroundColor: {r: 0.735849, g: 0.45576882, b: 0.17632605, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -453,14 +453,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb389ede719a9f341aa3c4b3e95dfb2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tile: {fileID: 7482667652216324306, guid: 72aa432fc312e624d91e3599e0b518ad, type: 3}
-  worldSize: 100
+  bottomSand: {fileID: 7482667652216324306, guid: f8e422ef8d9d61540bb9b126f4579e6c, type: 3}
+  topSand: {fileID: 7482667652216324306, guid: 63b7207ed21b2e947868bc6d76565091, type: 3}
+  stone: {fileID: 7482667652216324306, guid: 16f3ad01db22d2249b9936977882b5f9, type: 3}
+  sandLayerHeight: 5
+  worldSize: 160
+  chunkSize: 16
+  worldChunks: []
   noiseFrequency: 0.04
   seed: 0
   heightMultiplier: 25
   heightAddition: 25
   noiseTexture: {fileID: 0}
   isSolid: 1
+  biomeMap: {fileID: 0}
 --- !u!4 &1390672088
 Transform:
   m_ObjectHideFlags: 0
