@@ -24,7 +24,7 @@ public class WorldGeneration : MonoBehaviour
 
     // For biomes
     public Texture2D biomeMap;
-
+    public float biomeFrequency;
 
     private void Start()
     {
