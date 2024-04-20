@@ -13,6 +13,7 @@ public class WorldGeneration : MonoBehaviour
 
     public int worldSize = 160;
     public int chunkSize = 16;
+    public float height;
     public GameObject[] worldChunks;
 
     public float noiseFrequency = 0.04f;
@@ -52,7 +53,8 @@ public class WorldGeneration : MonoBehaviour
     {
         for (int x = 0; x < worldSize; x++)
         {
-            float height = Mathf.PerlinNoise((x + seed) * noiseFrequency, seed * noiseFrequency) * heightMultiplier + heightAddition; // To determine the "steepness of the terrain"
+            // To determine the "steepness of the terrain"
+            height = Mathf.PerlinNoise((x + seed) * noiseFrequency, seed * noiseFrequency) * heightMultiplier + heightAddition; 
 
             for (int y = 0; y < height; y++)
             {

@@ -7,12 +7,13 @@ public class PauseMenu : MonoBehaviour
 {
     private bool isGamePaused = false;
     public GameObject pauseMenu;
-    public AudioSource source; // For lowering the audio once game is paused
+    public GameObject SettingsMenu;
+    public AudioSource Source; // For lowering the audio once game is paused
     public void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (isGamePaused)
+            if (isGamePaused && SettingsMenu.activeSelf == false)
             {
                 ContinueGame();
             }
@@ -27,14 +28,14 @@ public class PauseMenu : MonoBehaviour
         pauseMenu.gameObject.SetActive(true);
         Time.timeScale = 0;
         isGamePaused = true;
-        source.volume = source.volume / 2;
+        Source.volume = Source.volume / 2;
     }
     public void ContinueGame()
     {
         pauseMenu.gameObject.SetActive(false);
         Time.timeScale = 1;
         isGamePaused = false;
-        source.volume = source.volume * 2;
+        Source.volume = Source.volume * 2;
     }
     public void QuitGame()
     {
