@@ -28,14 +28,12 @@ public class PauseMenu : MonoBehaviour
         pauseMenu.gameObject.SetActive(true);
         Time.timeScale = 0;
         isGamePaused = true;
-        Source.volume = Source.volume / 2;
     }
     public void ContinueGame()
     {
         pauseMenu.gameObject.SetActive(false);
         Time.timeScale = 1;
         isGamePaused = false;
-        Source.volume = Source.volume * 2;
     }
     public void QuitGame()
     {

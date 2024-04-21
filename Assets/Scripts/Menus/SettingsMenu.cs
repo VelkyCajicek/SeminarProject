@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class SettingsMenu : MonoBehaviour
 {
-    public AudioSource audioSource;
-    public void SetVolume(float volume)
+    public AudioSource musicSource;
+    public AudioSource vfxSource;
+    public void SetMusicVolume(float volume)
     {
-        audioSource.volume = volume;
+        musicSource.volume = volume;
     }
+    public void SetVFXVolume(float volume)
+    {
+        vfxSource.volume = volume;
+    }
+
 }

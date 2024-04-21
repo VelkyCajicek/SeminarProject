@@ -106,6 +106,9 @@ public class WorldGeneration : MonoBehaviour
         newTile.AddComponent<BoxCollider2D>();
         newTile.GetComponent<BoxCollider2D>().size = Vector2.one;
 
+        // Adds ground layer to tiles so player can jump from them
+        newTile.layer = LayerMask.NameToLayer("Ground");
+
         // Adds all tiles to game scene
         newTile.AddComponent<SpriteRenderer>();
         newTile.GetComponent<SpriteRenderer>().sprite = tileSprite;
