@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class WorldGeneration : MonoBehaviour
 {
-    
+    public ParticleSystem spiceEffect;
+
     public Sprite bottomSand;
     public Sprite topSand;
     public Sprite stone;
@@ -33,6 +34,10 @@ public class WorldGeneration : MonoBehaviour
         GenerateNoiseTexture();
         CreateChunks();
         GenerateTerrain();
+
+        // Particle effects
+        spiceEffect.transform.position = new Vector3(0, worldSize / 4);
+        spiceEffect.transform.localScale = new Vector3(5f, 0.4f, worldSize / 8);
     }
     public void GenerateNoiseTexture()
     {
