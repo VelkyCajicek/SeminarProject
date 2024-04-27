@@ -14,23 +14,22 @@ public class PlayerMove : MonoBehaviour, IDataPersistence
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
 
-    // Variables related to player spawn location
-    WorldGeneration worldGeneration;
-    [SerializeField] GameObject Terrain;
+    public Vector2 spawnPos;
 
     public AudioSource footSteps;
+    
+    public void Spawn()
+    {
+        GetComponent<Transform>().position = spawnPos;
+    }
     private void Awake() // Awake functions run first so therefore we get the size of the map before assigning it anywhere
     {
-        worldGeneration = Terrain.GetComponent<WorldGeneration>();
+        GetComponent<Transform>().position = spawnPos;
     }
     void Start()
     {
         // References Rigidbody to edit the vectors connected to this component
         rb = GetComponent<Rigidbody2D>();
-
-        // Spawn the player in the middle of the map
-        float worldSize = worldGeneration.worldSize;
-        transform.position = new Vector3(worldSize / 2, worldSize / 2);
     }
 
     void Update()

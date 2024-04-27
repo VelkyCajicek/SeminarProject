@@ -14,12 +14,10 @@ public class MainBackground : MonoBehaviour
     }
     void Start()
     {
-        
         float worldSize = worldGeneration.worldSize;
 
         background.transform.position = new Vector3(worldSize / 2, 50);
         background.transform.localScale = new Vector3(worldSize / 10, worldSize / 20);
-
     }
 
     
