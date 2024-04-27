@@ -11,6 +11,7 @@ public class EnemyMove : MonoBehaviour
     private float speed = 8f;
     private float distanceFromPlayer;
     private float jumpingPower = 6f;
+    private bool isFacingRight = false;
     //private bool isFacingRight = false;
 
     [SerializeField] private Rigidbody2D rb;
@@ -33,6 +34,7 @@ public class EnemyMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         transform.rotation = Quaternion.identity;
         distanceFromPlayer = Vector2.Distance(transform.position, player.transform.position);
         Vector2 playerDirection = player.transform.position - transform.position;
@@ -49,8 +51,19 @@ public class EnemyMove : MonoBehaviour
         moveEnemy.x = (playerDirection.x < speed) ? playerDirection.x : (playerDirection.x < 0) ? -speed:speed;
         rb.velocity = new Vector2(moveEnemy.x, moveEnemy.y);
 
+        Flip();
         //transform.position = Vector2.MoveTowards(transform.position,player.transform.position,speed);
 
+    }
+    private void Flip() // Movement left and right
+    {
+        if (isFacingRight && rb.velocity.x < 0f || !isFacingRight && rb.velocity.x > 0f)
+        {
+            isFacingRight = !isFacingRight;
+            Vector3 localScale = transform.localScale;
+            localScale.x *= -1f;
+            transform.localScale = localScale;
+        }
     }
     private bool IsGrounded()
     {
