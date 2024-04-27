@@ -8,6 +8,7 @@ public class WorldGeneration : MonoBehaviour
     [Header("Instances of objects")]
     public ParticleSystem spiceEffect;
     public PlayerMove player;
+    public EnemyMove enemy;
 
 
     [Header("Tile Atlas")]
@@ -54,6 +55,8 @@ public class WorldGeneration : MonoBehaviour
 
         // Player spawn
         player.Spawn();
+        //Enemy spawn - only temporary
+        enemy.Spawn();
 
         // Particle effects
         spiceEffect.transform.position = new Vector3(0, worldSize / 4);
@@ -83,6 +86,7 @@ public class WorldGeneration : MonoBehaviour
             if(x == worldSize / 2) // Player spawn
             {
                 player.spawnPos = new Vector2(x, height + 2);
+                enemy.spawnPos = player.spawnPos;//temporary
             }
             for (int y = 0; y < height; y++)
             {

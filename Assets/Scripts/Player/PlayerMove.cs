@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,7 @@ public class PlayerMove : MonoBehaviour, IDataPersistence
     private float speed = 8f;
     private float jumpingPower = 16f;
     private bool isFacingRight = false;
+    private bool isFlying = false;
 
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
@@ -41,15 +43,42 @@ public class PlayerMove : MonoBehaviour, IDataPersistence
 
         horizontal = Input.GetAxisRaw("Horizontal");
 
-        if (Input.GetButtonDown("Jump") && IsGrounded())
+        if (Input.GetKeyDown(KeyCode.F))
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+            isFlying = !isFlying;
+        }
+        if (!isFlying)
+        {
+            speed = 8f;
+            jumpingPower = 16f;
+            if (Input.GetButtonDown("Jump") && IsGrounded())
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+            }
+
+            if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
+            }
+        }
+        else //Flying
+        {
+            speed = 24f;
+            jumpingPower = 12f;
+            if (Input.GetButton("Jump") && Input.GetKey(KeyCode.LeftShift))
+            {
+                rb.velocity = new Vector2(rb.velocity.x, 0);
+            }
+            else if (Input.GetButton("Jump"))
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+            }
+            else if (Input.GetKey(KeyCode.LeftShift))
+            {
+                rb.velocity = new Vector2(rb.velocity.x, -jumpingPower);
+            }
         }
 
-        if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
-        }
 
         Flip();
 
