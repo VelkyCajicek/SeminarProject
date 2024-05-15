@@ -1,0 +1,252 @@
+BiomeClass
+    public string biomeName;
+    public Color biomeColor;
+
+
+    [Header("Noise settings")]
+    public float caveFreq = 0.05f;
+    public float terrainFreq = 0.05f;
+    public Texture2D caveNoiseTexture;
+
+    [Header("Generation settings")]
+    public float heightMultiplier = 15f;
+    public int heightAddition = 25;
+    public int dirtLayerHeight = 5;
+    public bool generateCaves = true;
+    public float surfaceValue = 0.8f;
+
+    [Header("Rocks")]
+    public int rockChance = 10;
+    public int maxrockHeight = 2;
+    public int maxrockWidth = 2;
+
+    [Header("Ore Settings")]
+    public OreClass[] ores;
+
+TerrainGeneration
+
+[Header("Tile Atlas")]
+    public TileAtlas tileAtlas;
+
+    [Header("Biomes settings")]
+    public Texture2D biomeMap;
+    public float biomeFrequency;
+    public Gradient biomeColorsGradient;
+
+    [Header("Biomes")]
+    public BiomeClass[] biomes;
+    private Color[] biomeColors;
+    private BiomeClass curBiome;
+    
+    [Header("Rocks")]
+    public int rockChance = 10;
+    public int maxrockHeight = 2;
+    public int maxrockWidth = 2;
+
+    [Header("Generation settings")]
+    public int chunkSize = 16;
+    public int dirtLayerHeight = 5;
+    public bool generateCaves = true;
+    public float surfaceValue = 0.8f;
+    public int worldSize = 100;
+
+    public float heightMultiplier = 15f;
+    public int heightAddition = 25;
+
+    [Header("Noise settings")]
+    public float caveFreq = 0.05f;
+    public float terrainFreq = 0.05f;
+    public Texture2D caveNoiseTexture;
+    public float seed;
+
+
+    [Header("Ore Settings")]
+    public OreClass[] ores;
+
+    private GameObject[] worldChunks;
+    private List<Vector2> worldTiles = new List<Vector2>();
+
+    private void Start()
+    {
+        seed = Random.Range(-10000, 10000);
+        DrawTextures();
+        CreateChunks();
+        GenerateTerrain();
+    }
+
+    public void DrawTextures()
+    {
+        biomeMap = new Texture2D(worldSize, worldSize);
+        DrawBiomeTexture();
+        for (int i = 0; i < biomes.Length; i++)
+        {
+            biomes[i].caveNoiseTexture = new Texture2D(worldSize, worldSize);
+            for (int o = 0; o < biomes[i].ores.Length; o++)
+            {
+                biomes[i].ores[o].spreadTexture = new Texture2D(worldSize, worldSize);
+            }
+            GenerateNoiseTexture(biomes[i].caveFreq, biomes[i].surfaceValue, biomes[i].caveNoiseTexture);
+            // Ores
+            for (int o = 0; o < biomes[i].ores.Length; o++)
+            {
+                GenerateNoiseTexture(biomes[i].ores[o].rarity, biomes[i].ores[o].size, biomes[i].ores[o].spreadTexture);
+            }
+        }
+
+    }
+
+    public void DrawBiomeTexture()
+    {
+        for (int x = 0; x < biomeMap.width; x++)
+        {
+            for (int y = 0; y < biomeMap.height; y++)
+            {
+                float v = Mathf.PerlinNoise((x + seed) * biomeFrequency, (y + seed) * biomeFrequency);
+                Color col = biomeColorsGradient.Evaluate(v);
+                biomeMap.SetPixel(x, y, col);
+            }
+        }
+        biomeMap.Apply();
+    }
+
+    public void CreateChunks()
+    {
+        int numChunks = worldSize / chunkSize;
+        worldChunks = new GameObject[numChunks];
+        for (int i = 0; i < numChunks; i++)
+        {
+            GameObject newChunk = new GameObject();
+            newChunk.name = $"Chunk {i}";
+            newChunk.transform.parent = this.transform;
+            worldChunks[i] = newChunk;
+        }
+    }
+
+    public void GenerateTerrain()
+    {
+        for (int x = 0; x < worldSize; x++)
+        {
+            float height = Mathf.PerlinNoise((x + seed) * terrainFreq, seed * terrainFreq) * heightMultiplier + heightAddition;
+
+            for (int y = 0; y < height; y++)
+            {
+                Sprite[] tileSprites;
+                if (y < height - dirtLayerHeight)
+                {
+                    if(ores[0].spreadTexture.GetPixel(x,y).r > 0.5f && height - y > ores[0].maxSpawnHeight) { tileSprites = tileAtlas.coal.tileSprites; }
+                    else if (ores[1].spreadTexture.GetPixel(x, y).r > 0.5f && height - y > ores[1].maxSpawnHeight) { tileSprites = tileAtlas.copper.tileSprites; }
+                    else if (ores[2].spreadTexture.GetPixel(x, y).r > 0.5f && height - y > ores[2].maxSpawnHeight) { tileSprites = tileAtlas.iron.tileSprites; }
+                    else if (ores[3].spreadTexture.GetPixel(x, y).r > 0.5f && height - y > ores[3].maxSpawnHeight) { tileSprites = tileAtlas.steel.tileSprites; }
+                    else { tileSprites = tileAtlas.stone.tileSprites; }
+                    
+                }
+                else if(y < height - 1)
+                {
+                    tileSprites = tileAtlas.dirt.tileSprites;
+                }
+                else
+                {
+                    tileSprites = tileAtlas.grass.tileSprites;
+                }
+
+                if (generateCaves)
+                {
+                    if (caveNoiseTexture.GetPixel(x, y).r < surfaceValue)
+                    {
+                        PlaceTile(tileSprites, x, y);
+                    }
+                }
+                else
+                {
+                    PlaceTile(tileSprites, x, y);
+                }
+                if(y >= height - 1)
+                {
+                    int t = Random.Range(0, rockChance);
+
+                    if (t == 1)
+                    {
+                        // Generate a rock
+                        if (worldTiles.Contains(new Vector2(x, y)))
+                        {
+                            GenerateRock(x, y + 1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void GenerateNoiseTexture(float frequency, float limit, Texture2D noiseTexture)
+    {
+        for (int x = 0; x < noiseTexture.width; x++)
+        {
+            for (int y = 0; y < noiseTexture.height; y++)
+            {
+                float v = Mathf.PerlinNoise((x + seed) * frequency, (y + seed) * frequency);
+                if(v > limit)
+                {
+                    noiseTexture.SetPixel(x, y, Color.white);
+                }
+                else
+                {
+                    noiseTexture.SetPixel(x, y, Color.black);
+                }
+            }
+        }
+        noiseTexture.Apply();
+    }
+
+    public void GenerateRock(int x, int y)
+    {
+        int rockHeight = Random.Range(1, maxrockHeight);
+        int rockWidth = Random.Range(1, maxrockWidth);
+        for (int i = 0; i < rockHeight + 1; i++)
+        {
+            for (int j = 0; j < rockWidth + 1; j++)
+            {
+                PlaceTile(tileAtlas.rock.tileSprites, x + j, y + i);
+            }
+        }
+    }
+
+    public void PlaceTile(Sprite[] tileSprites, int x, int y)
+    {
+        if (!worldTiles.Contains(new Vector2(x,y)))
+        {
+            GameObject newTile = new GameObject();
+
+            int chunkCoord = Mathf.RoundToInt(Mathf.Round(x / chunkSize) * chunkSize); // Just use divisable chunk sizes
+            chunkCoord /= chunkSize;
+            newTile.transform.parent = worldChunks[chunkCoord].transform;
+
+            newTile.AddComponent<SpriteRenderer>();
+
+            int spriteIndex = Random.Range(0, tileSprites.Length);
+            newTile.GetComponent<SpriteRenderer>().sprite = tileSprites[spriteIndex];
+
+            newTile.name = tileSprites[0].name;
+            newTile.transform.position = new Vector2(x + 0.5f, y + 0.5f);
+
+            worldTiles.Add(newTile.transform.position - (Vector3.one * 0.5f));
+        }
+
+    }
+
+OreClass
+    public string name;
+    public float rarity;
+    public float size;
+    public int maxSpawnHeight;
+    public Texture2D spreadTexture;
+
+TileAtlas
+    public TileClass stone;
+    public TileClass dirt;
+    public TileClass grass;
+    public TileClass rock;
+
+    public TileClass coal;
+    public TileClass iron;
+    public TileClass steel;
+    public TileClass copper;
