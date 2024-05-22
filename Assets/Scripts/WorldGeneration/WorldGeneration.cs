@@ -6,10 +6,10 @@ using UnityEngine;
 public class WorldGeneration : MonoBehaviour
 {
     [Header("Instances of objects")]
+    public Vector2 spawnPos;
     public ParticleSystem spiceEffect;
     public PlayerMove player;
-    public EnemyMove enemy;
-
+    public GameObject Enemy;
 
     [Header("Tile Atlas")]
     public TileAtlas tileAtlas;
@@ -56,7 +56,7 @@ public class WorldGeneration : MonoBehaviour
         // Player spawn
         player.Spawn();
         //Enemy spawn - only temporary
-        enemy.Spawn();
+        spawnEnemy();
 
         // Particle effects
         spiceEffect.transform.position = new Vector3(0, worldSize / 4);
@@ -86,7 +86,7 @@ public class WorldGeneration : MonoBehaviour
             if(x == worldSize / 2) // Player spawn
             {
                 player.spawnPos = new Vector2(x, height + 2);
-                enemy.spawnPos = player.spawnPos;//temporary
+                spawnPos = player.spawnPos;//temporary
             }
             for (int y = 0; y < height; y++)
             {
@@ -189,5 +189,21 @@ public class WorldGeneration : MonoBehaviour
         
         newTile.name = tileSprites[0].name;
         newTile.transform.position = new Vector2(x + 0.5f, y + 0.5f);
+    }
+    int cycle = 0;
+    void Update()
+    {
+        cycle++;
+        if (cycle>=1000) cycle = 0;
+        if (cycle%1000==0)
+        {
+        }
+    }
+    public void spawnEnemy()
+    {
+        GameObject go = GameObject.Instantiate(Enemy);
+        EnemyMove enemyMoveScript = go.GetComponent<EnemyMove>();
+        enemyMoveScript.spawnPos = spawnPos;
+        enemyMoveScript.Spawn();
     }
 }

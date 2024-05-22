@@ -11,10 +11,15 @@ public class PlayerMove : MonoBehaviour, IDataPersistence
     private float jumpingPower = 16f;
     private bool isFacingRight = false;
     private bool isFlying = false;
+    private int maxHealth = 100;
+
+
+    private int health = 100;
 
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
+    public Collider2D playerCollider;
 
     public Vector2 spawnPos;
 
@@ -125,5 +130,20 @@ public class PlayerMove : MonoBehaviour, IDataPersistence
     public void SaveData(ref GameData data)
     {
         data.playerPosition = this.transform.position;
+    }
+    public void removeHealth(int attackStrength)
+    {
+        this.health -= attackStrength;
+        Debug.Log("CurrentHealth: " + health);
+        if (health <= 0)
+        {
+            health = 0;
+            die();
+        }
+    }
+    public void die()
+    {
+        GetComponent<Transform>().position = spawnPos;
+        health = maxHealth;
     }
 }
