@@ -8,8 +8,9 @@ public class WorldGeneration : MonoBehaviour
     [Header("Instances of objects")]
     public Vector2 spawnPos;
     public ParticleSystem spiceEffect;
-    public PlayerMove player;
+    public GameObject Player;
     public GameObject Enemy;
+    public GameObject Entities;
 
     [Header("Tile Atlas")]
     public TileAtlas tileAtlas;
@@ -49,12 +50,12 @@ public class WorldGeneration : MonoBehaviour
         seed = UnityEngine.Random.Range(-10000, 10000);
         caveNoiseTexture = new Texture2D(worldSize, worldSize);
         DrawTextures();
-        
+
         CreateChunks();
         GenerateTerrain();
 
         // Player spawn
-        player.Spawn();
+        spawnPlayer();
         //Enemy spawn - only temporary
         spawnEnemy();
 
@@ -83,21 +84,20 @@ public class WorldGeneration : MonoBehaviour
             // To determine the "steepness of the terrain"
             height = Mathf.PerlinNoise((x + seed) * curBiome.caveFrequency, seed * curBiome.caveFrequency) * curBiome.heightMultiplier + heightAddition; // Terrain frequency was here, instead of caveFrequency
 
-            if(x == worldSize / 2) // Player spawn
+            if (x == worldSize / 2) // Player spawn
             {
-                player.spawnPos = new Vector2(x, height + 2);
-                spawnPos = player.spawnPos;//temporary
+                spawnPos = new Vector2(x, height + 2);
             }
             for (int y = 0; y < height; y++)
             {
                 curBiome = GetCurrentBiome(x, y);
                 if (y < height - sandLayerHeight)
-                {   
+                {
                     tileSprites = curBiome.tileAtlas.bottomSand.tileSprites;
                 }
-                else if(y > height - 1)
+                else if (y > height - 1)
                 {
-                    
+
                     tileSprites = curBiome.tileAtlas.topSand.tileSprites;
                 }
                 else
@@ -186,24 +186,36 @@ public class WorldGeneration : MonoBehaviour
 
         int spriteIndex = UnityEngine.Random.Range(0, tileSprites.Length);
         newTile.GetComponent<SpriteRenderer>().sprite = tileSprites[spriteIndex];
-        
+
         newTile.name = tileSprites[0].name;
         newTile.transform.position = new Vector2(x + 0.5f, y + 0.5f);
     }
-    int cycle = 0;
+    int cycle = 1;
     void Update()
     {
         cycle++;
-        if (cycle>=1000) cycle = 0;
-        if (cycle%1000==0)
+        if (cycle > 1000) cycle = 1;
+        if (cycle % 1000 == 0)
         {
+            spawnEnemy();
         }
     }
     public void spawnEnemy()
     {
         GameObject go = GameObject.Instantiate(Enemy);
-        EnemyMove enemyMoveScript = go.GetComponent<EnemyMove>();
-        enemyMoveScript.spawnPos = spawnPos;
-        enemyMoveScript.Spawn();
+        Enemy enemyScript = go.GetComponent<Enemy>();
+        go.SetActive(true);
+        enemyScript.thisObject = go;
+        enemyScript.transform.parent = Entities.transform;
+        enemyScript.spawnPos = spawnPos;
+        enemyScript.Spawn();
     }
+    public void spawnPlayer()
+    {
+        Player playerScript = Player.GetComponent<Player>();
+        playerScript.thisObject = Player;
+        playerScript.spawnPos = spawnPos;
+        playerScript.Spawn();
+    }
+
 }

@@ -3,33 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMove : MonoBehaviour, IDataPersistence
+public class Player : EntityClass
 {
-    // Variables related to movement
-    private float horizontal;
-    private float speed = 8f;
-    private float jumpingPower = 16f;
-    private bool isFacingRight = false;
+    //IDataPersistenc
+    //EntityClass contains all variables etc.
     private bool isFlying = false;
-    private int maxHealth = 100;
     public Animator animator;
 
 
-    private int health = 100;
-
-    [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private LayerMask groundLayer;
-    public Collider2D playerCollider;
-
-    public Vector2 spawnPos;
-
-    public AudioSource footSteps;
-    
-    public void Spawn()
-    {
-        GetComponent<Transform>().position = spawnPos;
-    }
     private void Awake() // Awake functions run first so therefore we get the size of the map before assigning it anywhere
     {
         GetComponent<Transform>().position = spawnPos;
@@ -49,6 +30,7 @@ public class PlayerMove : MonoBehaviour, IDataPersistence
 
         horizontal = Input.GetAxisRaw("Horizontal");
         animator.SetFloat("Speed", Mathf.Abs(horizontal));
+
         if (Input.GetKeyDown(KeyCode.F))
         {
             isFlying = !isFlying;
@@ -90,7 +72,7 @@ public class PlayerMove : MonoBehaviour, IDataPersistence
 
         // Footsteps
 
-        if(rb.velocity.x != 0 && IsGrounded())
+        if (rb.velocity.x != 0 && IsGrounded())
         {
             if (!footSteps.isPlaying)
             {
@@ -101,50 +83,22 @@ public class PlayerMove : MonoBehaviour, IDataPersistence
         {
             footSteps.Stop();
         }
+
+        if (transform.position.y <= -10)
+        {
+            die();
+        }
     }
     private void FixedUpdate()
     {
         rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
-        
     }
 
-    private void Flip() // Movement left and right
-    {
-        if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
-        {
-            isFacingRight = !isFacingRight;
-            Vector3 localScale = transform.localScale;
-            localScale.x *= -1f;
-            transform.localScale = localScale;
-        }
-    }
-    private bool IsGrounded()
-    {
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
-    }
-
-    // For future setting up game saves (Video time 17:26, https://www.youtube.com/watch?v=aUi9aijvpgs)
-    public void LoadData(GameData data)
-    {
-        this.transform.position = data.playerPosition;
-    }
-    public void SaveData(ref GameData data)
-    {
-        data.playerPosition = this.transform.position;
-    }
-    public void removeHealth(int attackStrength)
-    {
-        this.health -= attackStrength;
-        Debug.Log("CurrentHealth: " + health);
-        if (health <= 0)
-        {
-            health = 0;
-            die();
-        }
-    }
-    public void die()
+    public override void die()
     {
         GetComponent<Transform>().position = spawnPos;
-        health = maxHealth;
+        setHealth(maxHealth);
     }
+
+
 }
