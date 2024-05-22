@@ -12,6 +12,7 @@ public class PlayerMove : MonoBehaviour, IDataPersistence
     private bool isFacingRight = false;
     private bool isFlying = false;
     private int maxHealth = 100;
+    public Animator animator;
 
 
     private int health = 100;
@@ -47,7 +48,7 @@ public class PlayerMove : MonoBehaviour, IDataPersistence
         // Allows player to jump
 
         horizontal = Input.GetAxisRaw("Horizontal");
-
+        animator.SetFloat("Speed", Mathf.Abs(horizontal));
         if (Input.GetKeyDown(KeyCode.F))
         {
             isFlying = !isFlying;
