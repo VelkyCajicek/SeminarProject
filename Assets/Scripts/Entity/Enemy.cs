@@ -57,4 +57,5 @@ public class Enemy : EntityClass
     {
         Destroy(thisObject);
     }
+    public override void updateHealth(){}
 }

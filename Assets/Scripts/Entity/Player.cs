@@ -34,6 +34,7 @@ public class Player : EntityClass
         if (Input.GetKeyDown(KeyCode.F))
         {
             isFlying = !isFlying;
+            removeHealth(5);
         }
         if (!isFlying)
         {
@@ -99,6 +100,9 @@ public class Player : EntityClass
         GetComponent<Transform>().position = spawnPos;
         setHealth(maxHealth);
     }
-
+    public override void updateHealth() 
+    {
+        thisObject.GetComponent<PlayerHUD>().updateHeartDisplay();
+    }
 
 }
