@@ -22,7 +22,6 @@ public class Enemy : EntityClass
     // Update is called once per frame
     void Update()
     {
-        if (currentAttackCooldown >= 1) currentAttackCooldown--;
         transform.rotation = Quaternion.identity;
         distanceFromPlayer = Vector2.Distance(transform.position, player.transform.position);
         Vector2 playerDirection = player.transform.position - transform.position;
@@ -48,10 +47,6 @@ public class Enemy : EntityClass
         Flip();
         //transform.position = Vector2.MoveTowards(transform.position,player.transform.position,speed);
 
-        if (transform.position.y <= -10)
-        {
-            die();
-        }
     }
     public override void die()
     {

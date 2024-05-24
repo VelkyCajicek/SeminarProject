@@ -37,6 +37,10 @@ public abstract class EntityClass : MonoBehaviour
         GetComponent<Transform>().position = spawnPos;
         currentHealth = maxHealth;
     }
+    private void FixedUpdate()
+    {
+        if (currentAttackCooldown >= 1) currentAttackCooldown--;
+    }
     public bool IsGrounded()
     {
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
@@ -49,6 +53,11 @@ public abstract class EntityClass : MonoBehaviour
             Vector3 localScale = transform.localScale;
             localScale.x *= -1f;
             transform.localScale = localScale;
+        }
+
+        if (transform.position.y <= -10)
+        {
+            die();
         }
     }
 
@@ -85,7 +94,6 @@ public abstract class EntityClass : MonoBehaviour
             AudioClip audio = deathSound[Random.Range(0, deathSound.Length)];
             PlaySound(otherSounds, audio);
         }
-        Debug.Log("CurrentHealth: " + currentHealth);
         updateHealth();
     }
     public void PlaySound(AudioSource source, AudioClip sound, float volume = 1f)
@@ -95,7 +103,7 @@ public abstract class EntityClass : MonoBehaviour
             source = thisObject.AddComponent<AudioSource>();
             source.playOnAwake = false;
             source.loop = false;
-            UnityEngine.Object.DontDestroyOnLoad(source.gameObject);
+            //UnityEngine.Object.DontDestroyOnLoad(source.gameObject);
         }
 
         source.clip = sound;

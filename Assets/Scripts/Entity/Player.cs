@@ -9,7 +9,7 @@ public class Player : EntityClass
     //EntityClass contains all variables etc.
     private bool isFlying = false;
     public Animator animator;
-
+    public Animation attackAnimation;
 
     private void Awake() // Awake functions run first so therefore we get the size of the map before assigning it anywhere
     {
@@ -26,15 +26,20 @@ public class Player : EntityClass
         // Locks rotation
         transform.rotation = Quaternion.identity;
 
-        // Allows player to jump
+        // Deals with all key presses
 
         horizontal = Input.GetAxisRaw("Horizontal");
         animator.SetFloat("Speed", Mathf.Abs(horizontal));
 
+        if (Input.GetKeyDown(KeyCode.Mouse0) && canAttack())
+        {
+            //TODO
+            Debug.Log("ATTACK");
+            animator.SetTrigger("attack");
+        }
         if (Input.GetKeyDown(KeyCode.F))
         {
             isFlying = !isFlying;
-            removeHealth(5);
         }
         if (!isFlying)
         {
@@ -85,10 +90,6 @@ public class Player : EntityClass
             footSteps.Stop();
         }
 
-        if (transform.position.y <= -10)
-        {
-            die();
-        }
     }
     private void FixedUpdate()
     {
