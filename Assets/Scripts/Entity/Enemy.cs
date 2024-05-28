@@ -40,13 +40,17 @@ public class Enemy : EntityClass
 
         if (objectCollider.IsTouching(playerCollider) && canAttack())
         {
-            attackAnotherEntity(player);
+            attackAnotherEntity(player.GetComponent<EntityClass>());
             //player.GetComponent<Player>().removeHealth(attackStrength);
         }
 
         Flip();
         //transform.position = Vector2.MoveTowards(transform.position,player.transform.position,speed);
 
+    }
+    private void FixedUpdate()
+    {
+        fixedUpdate();
     }
     public override void die()
     {

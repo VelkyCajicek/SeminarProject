@@ -195,9 +195,9 @@ public class WorldGeneration : MonoBehaviour
     {
         cycle++;
         if (cycle > 1000) cycle = 1;
-        if (cycle % 1000 == 0)
+        if (cycle % 1000 == 0 && Entities.GetComponentsInChildren<Enemy>().Length <=4)
         {
-            spawnEnemy();
+            //spawnEnemy();
         }
     }
     public void spawnEnemy()
