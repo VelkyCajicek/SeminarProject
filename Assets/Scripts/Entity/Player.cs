@@ -116,7 +116,7 @@ public class Player : EntityClass
         }
 
 
-        if (rb.velocity.x != 0 && IsGrounded())
+        if (rb.velocity.x != 0 && !isInAir)
         {
             if (!footSteps.isPlaying)
             {
