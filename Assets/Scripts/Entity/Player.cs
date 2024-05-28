@@ -28,7 +28,6 @@ public class Player : EntityClass
 
     void Update()
     {
-       // Debug.Log("Cooldown:" + currentAttackCooldown);
         // Locks rotation
         transform.rotation = Quaternion.identity;
 
@@ -36,13 +35,10 @@ public class Player : EntityClass
 
         horizontal = Input.GetAxisRaw("Horizontal");
         animator.SetFloat("Speed", Mathf.Abs(horizontal));
-
         if (Input.GetKeyDown(KeyCode.Mouse0) && canAttack())
         {
-            //TODO
-            Debug.Log("ATTACK");
+            animator.StopPlayback();
             animator.SetTrigger("attack");
-            //attacking = attackLength;
             Enemy[] enemies = entities.GetComponentsInChildren<Enemy>();
             Enemy closestEnemy = getClosestEnemy(enemies);
             if (closestEnemy != null)
@@ -50,17 +46,16 @@ public class Player : EntityClass
                 float distToEnemy = Vector2.Distance(transform.position, closestEnemy.transform.position);
                 Vector2 dirToEnemy = transform.position - closestEnemy.transform.position;
                 bool facingTowardsEnemy = dirToEnemy.x >= 0 != isFacingRight;
-                Debug.LogWarning(facingTowardsEnemy);
                 if ((distToEnemy <= 4.5 && facingTowardsEnemy) || (distToEnemy <= 1.5 && !facingTowardsEnemy))
                 {
                     attackAnotherEntity(closestEnemy);
                     playRandomSound(hitEnemySound);
                 }
-                else
-                {
-                    playRandomSound(missAttackSound);
-                    currentAttackCooldown = attackCooldown;
-                }
+            }
+            if (attacking <= 0)
+            {
+                playRandomSound(missAttackSound);
+                currentAttackCooldown = attackCooldown;
             }
         }
         if (Input.GetKeyDown(KeyCode.F))
@@ -77,6 +72,7 @@ public class Player : EntityClass
             {
                 rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
             }
+            rb.velocity = new Vector2(Math.Min(rb.velocity.x, speed), rb.velocity.y);
 
             RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.up);
             if (hit.collider != null)
@@ -102,15 +98,15 @@ public class Player : EntityClass
         }
 
 
-        //if (attacking <= 0) Flip();
-        Flip();
+        if (attacking <= 0) Flip();
+        //Flip();
 
         // Footsteps
         if (!isInAir)
         {
             animator.enabled = true;
         }
-        else
+        else if (!animator.GetCurrentAnimatorStateInfo(0).IsName("attack") && !animator.GetCurrentAnimatorStateInfo(0).IsName("idle"))
         {
             animator.enabled = false;
         }

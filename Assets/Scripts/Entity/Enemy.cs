@@ -36,7 +36,14 @@ public class Enemy : EntityClass
             moveEnemy.y = rb.velocity.y;
         }
         moveEnemy.x = (playerDirection.x < speed) ? playerDirection.x : (playerDirection.x < 0) ? -speed : speed;
-        rb.velocity = new Vector2(moveEnemy.x, moveEnemy.y);
+        /*float overSpeedLimit = Vector2.Distance(Vector2.zero, moveEnemy) / speed;
+        if (overSpeedLimit > 1)
+        {
+            moveEnemy /= overSpeedLimit;
+        }*/
+        rb.velocity = new Vector2(Math.Min(rb.velocity.x, speed), rb.velocity.y);
+
+        rb.velocity = moveEnemy;
 
         if (objectCollider.IsTouching(playerCollider) && canAttack())
         {

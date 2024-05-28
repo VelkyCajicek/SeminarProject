@@ -56,8 +56,6 @@ public class WorldGeneration : MonoBehaviour
 
         // Player spawn
         spawnPlayer();
-        //Enemy spawn - only temporary
-        spawnEnemy();
 
         // Particle effects
         spiceEffect.transform.position = new Vector3(0, worldSize / 4);
@@ -190,14 +188,15 @@ public class WorldGeneration : MonoBehaviour
         newTile.name = tileSprites[0].name;
         newTile.transform.position = new Vector2(x + 0.5f, y + 0.5f);
     }
-    int cycle = 1;
-    void Update()
+    int cycle = 0;
+    void FixedUpdate()
     {
         cycle++;
         if (cycle > 1000) cycle = 1;
         if (cycle % 1000 == 0 && Entities.GetComponentsInChildren<Enemy>().Length <=4)
         {
-            //spawnEnemy();
+            Debug.Log("Enemy Spawned");
+            spawnEnemy();
         }
     }
     public void spawnEnemy()
