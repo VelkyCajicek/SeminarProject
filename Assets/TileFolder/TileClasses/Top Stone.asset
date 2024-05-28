@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileName: Top Stone
   tileSprites:
-  - {fileID: 21300000, guid: e3029fdc9c1e4e244848978a0cc907a6, type: 3}
+  - {fileID: 21300000, guid: c975d047ea03a77429d545a6e7122505, type: 3}

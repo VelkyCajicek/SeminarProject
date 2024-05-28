@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileName: Bottom Stone
   tileSprites:
-  - {fileID: 21300000, guid: 5b98168cbfd3b5942bfd55f34519b3f7, type: 3}
+  - {fileID: 21300000, guid: 9aafd614353f95f4090cb4b463410742, type: 3}
