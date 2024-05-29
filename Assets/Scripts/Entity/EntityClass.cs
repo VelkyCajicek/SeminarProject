@@ -47,7 +47,6 @@ public abstract class EntityClass : MonoBehaviour
         if (attacking > 0)
         {
             attacking--;
-            if (attacking == 0 && log) Debug.Log("Finished Attack");
         }
         if (transform.position.y <= -10)
         {
@@ -84,7 +83,6 @@ public abstract class EntityClass : MonoBehaviour
     }
     public void attackAnotherEntity(EntityClass attackedEntity)
     {
-        if (log) Debug.Log("atackin");
         attackedEntity.removeHealth(attackStrength);
         currentAttackCooldown = attackCooldown;
         attacking = attackLength;
