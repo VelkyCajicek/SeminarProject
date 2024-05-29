@@ -11,6 +11,10 @@ public class PauseMenu : MonoBehaviour
     public AudioSource Source; // For lowering the audio once game is paused
     public void Update()
     {
+        if(pauseMenu.gameObject.activeSelf == false)
+        {
+            ContinueGame();
+        }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isGamePaused && SettingsMenu.activeSelf == false)
