@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Enemy : EntityClass
 {
@@ -13,6 +14,9 @@ public class Enemy : EntityClass
     public Collider2D playerCollider;
     public float distanceFromPlayer;
 
+    //LootTable
+    [Header("Loot")]
+    public List<LootItem> lootTable = new List<LootItem>();
 
     // Start is called before the first frame update
     void Start()
@@ -61,7 +65,24 @@ public class Enemy : EntityClass
     }
     public override void die()
     {
+        foreach (LootItem lootItem in lootTable)
+        {
+            if (Random.Range(0f, 100f) <= lootItem.dropChance)
+            {
+                InstantiateLoot(lootItem.itemToGet);
+            }
+        }
         Destroy(thisObject);
+    }
+
+    void InstantiateLoot(GameObject loot)
+    {
+        if (loot)
+        {
+            GameObject droppedLoot = Instantiate(loot, transform.position, Quaternion.identity);
+
+            //droppedLoot.GetComponent<SpriteRenderer>().color = Color.red;
+        }
     }
     public override void updateHealth(){}
 }
