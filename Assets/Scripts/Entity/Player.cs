@@ -28,6 +28,7 @@ public class Player : EntityClass
 
     void Update()
     {
+        animator.SetBool("isInAir",isInAir);
         // Locks rotation
         transform.rotation = Quaternion.identity;
 
@@ -67,6 +68,7 @@ public class Player : EntityClass
             if (Input.GetButtonDown("Jump") && IsGrounded())
             {
                 rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+                animator.SetTrigger("jump");
             }
             if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
             {
@@ -102,7 +104,7 @@ public class Player : EntityClass
         //Flip();
 
         // Footsteps
-        if (!isInAir)
+        /*if (!isInAir)
         {
             animator.enabled = true;
         }
@@ -110,6 +112,7 @@ public class Player : EntityClass
         {
             animator.enabled = false;
         }
+        */
 
 
         if (rb.velocity.x != 0 && !isInAir)
