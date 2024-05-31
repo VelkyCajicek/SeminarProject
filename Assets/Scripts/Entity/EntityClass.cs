@@ -28,6 +28,7 @@ public abstract class EntityClass : MonoBehaviour
     public Collider2D objectCollider;
     public GameObject thisObject;
     public GameObject entities;
+    public GameObject player;
 
     public Vector2 spawnPos;
 
@@ -115,7 +116,6 @@ public abstract class EntityClass : MonoBehaviour
             source = thisObject.AddComponent<AudioSource>();
             source.playOnAwake = false;
             source.loop = false;
-            //UnityEngine.Object.DontDestroyOnLoad(source.gameObject);
         }
 
         source.clip = sound;
@@ -126,6 +126,28 @@ public abstract class EntityClass : MonoBehaviour
     public void setHealth(int health)
     {
         currentHealth = health;
+    }
+    public void ignoreEnemyCollisions()
+    {
+        Enemy[] enemies = entities.GetComponentsInChildren<Enemy>();
+        foreach (Enemy enemy in enemies)
+        {
+            Collider2D colliderEnemy = enemy.GetComponent<Collider2D>();
+            Physics2D.IgnoreCollision(colliderEnemy.GetComponent<Collider2D>(), GetComponent<Collider2D>());
+        }
+    }
+    public void ignorePlayerCollisions()
+    {
+        Physics2D.IgnoreCollision(player.GetComponent<Collider2D>(), GetComponent<Collider2D>());
+    }
+    public void ignoreAmbientCollisions()
+    {
+        Ambient[] ambients = entities.GetComponentsInChildren<Ambient>();
+        foreach (Ambient ambient in ambients)
+        {
+            Collider2D colliderAmbient = ambient.GetComponent<Collider2D>();
+            Physics2D.IgnoreCollision(colliderAmbient.GetComponent<Collider2D>(), GetComponent<Collider2D>());
+        }
     }
     public abstract void die();
 }

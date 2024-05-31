@@ -10,7 +10,6 @@ public class Enemy : EntityClass
 {
     // Variables related to movement
     //private float horizontal;
-    public GameObject player;
     public Collider2D playerCollider;
     public float distanceFromPlayer;
 
@@ -21,6 +20,8 @@ public class Enemy : EntityClass
     // Start is called before the first frame update
     void Start()
     {
+        ignoreEnemyCollisions();
+        ignoreAmbientCollisions();
     }
 
     // Update is called once per frame

@@ -10,6 +10,7 @@ public class WorldGeneration : MonoBehaviour
     public ParticleSystem spiceEffect;
     public GameObject Player;
     public GameObject Enemy;
+    public GameObject Ambient;
     public GameObject Entities;
 
     [Header("Tile Atlas")]
@@ -56,6 +57,8 @@ public class WorldGeneration : MonoBehaviour
 
         // Player spawn
         spawnPlayer();
+
+        spawnAmbient();
 
         // Particle effects
         spiceEffect.transform.position = new Vector3(0, worldSize / 4);
@@ -208,6 +211,16 @@ public class WorldGeneration : MonoBehaviour
         enemyScript.transform.parent = Entities.transform;
         enemyScript.spawnPos = spawnPos;
         enemyScript.Spawn();
+    }
+    public void spawnAmbient()
+    {
+        GameObject go = GameObject.Instantiate(Ambient);
+        Ambient ambientScript = go.GetComponent<Ambient>();
+        go.SetActive(true);
+        ambientScript.thisObject = go;
+        ambientScript.transform.parent = Entities.transform;
+        ambientScript.spawnPos = spawnPos;
+        ambientScript.Spawn();
     }
     public void spawnPlayer()
     {
