@@ -5,7 +5,9 @@ using UnityEngine;
 
 public class Ambient : EntityClass
 {
+    public Animator animator;
     public float randomMoveChance;
+    private bool isInAir = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,6 +19,7 @@ public class Ambient : EntityClass
     // Update is called once per frame
     void Update()
     {
+        animator.SetBool("isInAir", isInAir);
         // Locks rotation
         transform.rotation = Quaternion.identity;
 
@@ -37,12 +40,17 @@ public class Ambient : EntityClass
     public void randomMove()
     {
         int dir = (Random.Range(-1f, 1f) >= 0f) ? 1 : -1;
+        
         rb.velocity = new Vector2(dir*speed,jumpingPower);
+        isInAir = true;
+        animator.SetTrigger("jump");
         Debug.Log("RandomMove");
+
     }
     public override void die()
     {
         Destroy(thisObject);
     }
     public override void updateHealth() { }
+    
 }
