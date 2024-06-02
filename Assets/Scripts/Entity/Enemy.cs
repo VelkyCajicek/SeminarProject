@@ -28,6 +28,8 @@ public class Enemy : EntityClass
     void Update()
     {
         transform.rotation = Quaternion.identity;
+        horizontal = (Mathf.Abs(rb.velocity.x) < 0.001f) ? 0 : (rb.velocity.x > 0) ? 1 : -1;
+
         distanceFromPlayer = Vector2.Distance(transform.position, player.transform.position);
         Vector2 playerDirection = player.transform.position - transform.position;
         //
