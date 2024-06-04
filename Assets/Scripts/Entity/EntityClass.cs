@@ -37,6 +37,8 @@ public abstract class EntityClass : MonoBehaviour
     public AudioClip[] hurtSound;
     public bool log = false;
     protected static AudioSource otherSounds;
+
+    
     public void Spawn()
     {
         GetComponent<Transform>().position = spawnPos;
@@ -103,6 +105,17 @@ public abstract class EntityClass : MonoBehaviour
         }
         updateHealth();
     }
+    public void Heal(int healAmount)
+    {
+        currentHealth += healAmount;
+        if(currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+        updateHealth();
+    }
+
+    
     public void playRandomSound(AudioClip[] sounds)
     {
         if (sounds.Length == 0) return;

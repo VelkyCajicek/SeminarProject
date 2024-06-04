@@ -24,6 +24,7 @@ public class Player : EntityClass
     {
         // References Rigidbody to edit the vectors connected to this component
         rb = GetComponent<Rigidbody2D>();
+        HealthAdd.OnHealthCollect += Heal;
     }
 
     void Update()
