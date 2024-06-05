@@ -11,7 +11,6 @@ public class Player : EntityClass
     //IDataPersistenc
     //EntityClass contains all variables etc.
     private bool isFlying = false;
-    private bool isInAir = false;
     public Animator animator;
     public Animation attackAnimation;
     public AudioClip[] missAttackSound;
@@ -77,12 +76,7 @@ public class Player : EntityClass
             }
             rb.velocity = new Vector2(Math.Min(rb.velocity.x, speed), rb.velocity.y);
 
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.up);
-            if (hit.collider != null)
-            {
-                float distance = Mathf.Abs(hit.point.y - transform.position.y);
-                isInAir = distance > 4;
-            }
+            updateIsInAir();
         }
         else //Flying
         {
@@ -116,7 +110,7 @@ public class Player : EntityClass
         */
 
 
-        if (rb.velocity.x != 0 && !isInAir)
+        if (rb.velocity.x != 0 && IsGrounded())
         {
             if (!footSteps.isPlaying)
             {

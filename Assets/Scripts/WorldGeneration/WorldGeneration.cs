@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class WorldGeneration : MonoBehaviour
@@ -9,7 +10,9 @@ public class WorldGeneration : MonoBehaviour
     public Vector2 spawnPos;
     public ParticleSystem spiceEffect;
     public GameObject Player;
-    public GameObject Enemy;
+    public GameObject EnemyNormal;
+    public GameObject EnemySpider;
+    public GameObject EnemyHarkonnen;
     public GameObject Ambient;
     public GameObject Entities;
 
@@ -196,21 +199,27 @@ public class WorldGeneration : MonoBehaviour
     {
         cycle++;
         if (cycle > 1000) cycle = 1;
-        if (cycle % 1000 == 0 && Entities.GetComponentsInChildren<Enemy>().Length <=4)
+        if (cycle % 100 == 0 && Entities.GetComponentsInChildren<Enemy>().Length <=0)
         {
-            Debug.Log("Enemy Spawned");
-            spawnEnemy();
+            //spawnEnemy("spider");
+            spawnEnemy("normal");
         }
     }
-    public void spawnEnemy()
+    public void spawnEnemy(String enemyType)
     {
-        GameObject go = GameObject.Instantiate(Enemy);
+
+        GameObject go = null;
+        if (enemyType == "normal") go = GameObject.Instantiate(EnemyNormal);
+        if (enemyType == "spider") go = GameObject.Instantiate(EnemySpider);
+        if (enemyType == "harkonnen") go = GameObject.Instantiate(EnemyHarkonnen);
+        if (go == null) return;
         Enemy enemyScript = go.GetComponent<Enemy>();
         go.SetActive(true);
         enemyScript.thisObject = go;
         enemyScript.transform.parent = Entities.transform;
         enemyScript.spawnPos = spawnPos;
         enemyScript.Spawn();
+        Debug.Log($"Enemy Spawned (${enemyType})");
     }
     public void spawnAmbient()
     {

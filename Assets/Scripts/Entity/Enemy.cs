@@ -12,7 +12,8 @@ public class Enemy : EntityClass
     //private float horizontal;
     public Collider2D playerCollider;
     public float distanceFromPlayer;
-
+    public string enemyType;
+    public float jumpDistFromWall;
     //LootTable
     [Header("Loot")]
     public List<LootItem> lootTable = new List<LootItem>();
@@ -27,39 +28,45 @@ public class Enemy : EntityClass
     // Update is called once per frame
     void Update()
     {
+        updateIsInAir();
         transform.rotation = Quaternion.identity;
         horizontal = (Mathf.Abs(rb.velocity.x) < 0.001f) ? 0 : (rb.velocity.x > 0) ? 1 : -1;
 
-        distanceFromPlayer = Vector2.Distance(transform.position, player.transform.position);
-        Vector2 playerDirection = player.transform.position - transform.position;
-        //
-        Vector2 moveEnemy;
-        if (IsGrounded() && playerDirection.y > 0.1)
-        {
-            moveEnemy.y = jumpingPower;
-        }
-        else
-        {
-            moveEnemy.y = rb.velocity.y;
-        }
-        moveEnemy.x = (playerDirection.x < speed) ? playerDirection.x : (playerDirection.x < 0) ? -speed : speed;
-        /*float overSpeedLimit = Vector2.Distance(Vector2.zero, moveEnemy) / speed;
-        if (overSpeedLimit > 1)
-        {
-            moveEnemy /= overSpeedLimit;
-        }*/
-        rb.velocity = new Vector2(Math.Min(rb.velocity.x, speed), rb.velocity.y);
-
-        rb.velocity = moveEnemy;
+        movement();
 
         if (objectCollider.IsTouching(playerCollider) && canAttack())
         {
             attackAnotherEntity(player.GetComponent<EntityClass>());
-            //player.GetComponent<Player>().removeHealth(attackStrength);
         }
 
         Flip();
-        //transform.position = Vector2.MoveTowards(transform.position,player.transform.position,speed);
+    }
+    private void movement()
+    {
+        distanceFromPlayer = Vector2.Distance(transform.position, player.transform.position);
+        Vector2 playerDirection = player.transform.position - transform.position;
+        Vector2 playerDirLeftRight = new Vector2(playerDirection.x, 0);
+        //
+        Vector2 moveEnemy = rb.velocity;
+        if (getDistanceRaycast(playerDirLeftRight) != float.NaN && getDistanceRaycast(playerDirLeftRight) > 0.05f)
+        {
+            if (enemyType == "normal" &&  IsGrounded() && getDistanceRaycast(playerDirLeftRight) < jumpDistFromWall)
+            {
+                moveEnemy.y = jumpingPower;
+            }
+            else if (enemyType == "spider" && getDistanceRaycast(playerDirLeftRight) < jumpDistFromWall)
+            {//No Grounded check - for climbing
+                moveEnemy.y = jumpingPower;
+            }
+        }
+        if (enemyType == "spider" && getDistanceRaycast(playerDirLeftRight) > jumpDistFromWall && moveEnemy.y > 0)
+        {
+            moveEnemy.y = 0;
+        }
+
+        moveEnemy.x = (playerDirection.x < speed) ? playerDirection.x : (playerDirection.x < 0) ? -speed : speed;
+
+        rb.velocity = moveEnemy;
 
     }
     private void FixedUpdate()

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Random = UnityEngine.Random;
 using UnityEngine;
 using static Unity.VisualScripting.Member;
+using Unity.Burst.CompilerServices;
 
 public abstract class EntityClass : MonoBehaviour
 {
@@ -16,6 +17,9 @@ public abstract class EntityClass : MonoBehaviour
     public int attackCooldown;
     public int attackStrength;
     public int attackLength;
+    public bool isInAir = false;
+    public float isInAirThreshold;
+    
 
 
     public int currentHealth;
@@ -58,7 +62,39 @@ public abstract class EntityClass : MonoBehaviour
     }
     public bool IsGrounded()
     {
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+        //return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+        return !isInAir;
+    }
+    public Vector2 getFeetPos()
+    {
+        Vector2 feetPos = objectCollider.bounds.center;
+        feetPos.y -= objectCollider.bounds.extents.y;
+        return feetPos;
+    }
+    public void updateIsInAir()
+    {
+        Vector2 sendFrom = getFeetPos();
+        if (isInAirThreshold == float.NaN) return;
+        RaycastHit2D hit = Physics2D.Raycast(sendFrom, -Vector2.up);
+        if (hit.collider != null)
+        {
+            float distance = Mathf.Abs(hit.point.y - sendFrom.y);
+            isInAir = distance > isInAirThreshold;
+            Debug.DrawLine(sendFrom, hit.point, Color.red);
+        }
+    }
+    public float getDistanceRaycast(Vector2 dir)
+    {
+        Vector2 sendFrom = getFeetPos();
+        RaycastHit2D hit = Physics2D.Raycast(sendFrom, dir);
+        if (hit.collider != null)
+        {
+            float distX = Mathf.Abs(hit.point.x - sendFrom.x);
+            float distY = Mathf.Abs(hit.point.y - sendFrom.y);
+            Debug.DrawLine(sendFrom, hit.point, Color.green);
+            return Mathf.Sqrt(distX*distX + distY*distY);
+        }
+        return float.NaN;
     }
     public void Flip() // Movement left and right
     {
