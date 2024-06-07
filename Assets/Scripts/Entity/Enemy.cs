@@ -14,6 +14,7 @@ public class Enemy : EntityClass
     public float distanceFromPlayer;
     public string enemyType;
     public float jumpDistFromWall;
+    public Animator animator;
     //LootTable
     [Header("Loot")]
     public List<LootItem> lootTable = new List<LootItem>();
@@ -28,6 +29,10 @@ public class Enemy : EntityClass
     // Update is called once per frame
     void Update()
     {
+        if (animator != null)
+        {
+            animator.SetFloat("speed", Mathf.Abs(rb.velocity.x));
+        }
         updateIsInAir();
         transform.rotation = Quaternion.identity;
         horizontal = (Mathf.Abs(rb.velocity.x) < 0.001f) ? 0 : (rb.velocity.x > 0) ? 1 : -1;
@@ -37,6 +42,10 @@ public class Enemy : EntityClass
         if (objectCollider.IsTouching(playerCollider) && canAttack())
         {
             attackAnotherEntity(player.GetComponent<EntityClass>());
+            if (animator!=null)
+            {
+                animator.SetTrigger("attack");
+            }
         }
 
         Flip();

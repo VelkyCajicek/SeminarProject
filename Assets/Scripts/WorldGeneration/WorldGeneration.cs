@@ -202,7 +202,7 @@ public class WorldGeneration : MonoBehaviour
         if (cycle % 100 == 0 && Entities.GetComponentsInChildren<Enemy>().Length <=0)
         {
             //spawnEnemy("spider");
-            spawnEnemy("normal");
+            spawnEnemy("spider");
         }
     }
     public void spawnEnemy(String enemyType)
