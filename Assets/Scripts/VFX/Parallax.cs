@@ -25,7 +25,7 @@ public class Parallax : MonoBehaviour
     private void FixedUpdate()
     {
         Vector3 distance = camTransform.position - lastCamPos;
-        transform.position += new Vector3(distance.x * parallaxStrengthX, distance.y * parallaxStrengthY);
+        transform.position += new Vector3(distance.x * -parallaxStrengthX, distance.y * -parallaxStrengthY);
         lastCamPos = camTransform.position;
         if (Mathf.Abs(camTransform.position.x - transform.position.x)>=spriteWidth * spriteScaleX)
         {
