@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class WorldGeneration : MonoBehaviour
 {
@@ -199,27 +200,21 @@ public class WorldGeneration : MonoBehaviour
     {
         cycle++;
         if (cycle > 1000) cycle = 1;
-        if (cycle % 100 == 0 && Entities.GetComponentsInChildren<Enemy>().Length <=0)
+        if (cycle % 100 == 0 && Entities.GetComponentsInChildren<Enemy>().Length <=1)
         {
-            //spawnEnemy("spider");
-            spawnEnemy("spider");
+            spawnEnemy((Random.Range(0, 100f) > 50) ? EnemySpider : EnemyNormal);//Spawns a random enemy
         }
     }
-    public void spawnEnemy(String enemyType)
+    public void spawnEnemy(GameObject EnemyObject)
     {
-
-        GameObject go = null;
-        if (enemyType == "normal") go = GameObject.Instantiate(EnemyNormal);
-        if (enemyType == "spider") go = GameObject.Instantiate(EnemySpider);
-        if (enemyType == "harkonnen") go = GameObject.Instantiate(EnemyHarkonnen);
-        if (go == null) return;
+        GameObject go = GameObject.Instantiate(EnemyObject);
         Enemy enemyScript = go.GetComponent<Enemy>();
         go.SetActive(true);
         enemyScript.thisObject = go;
         enemyScript.transform.parent = Entities.transform;
         enemyScript.spawnPos = spawnPos;
         enemyScript.Spawn();
-        Debug.Log($"Enemy Spawned (${enemyType})");
+        Debug.Log($"Enemy Spawned");
     }
     public void spawnAmbient()
     {

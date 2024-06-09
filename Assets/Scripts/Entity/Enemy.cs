@@ -73,7 +73,7 @@ public class Enemy : EntityClass
             moveEnemy.y = 0;
         }
 
-        moveEnemy.x = (playerDirection.x < speed) ? playerDirection.x : (playerDirection.x < 0) ? -speed : speed;
+        moveEnemy.x = (Math.Abs(playerDirection.x) < speed) ? playerDirection.x : (playerDirection.x < 0) ? -speed : speed;
 
         rb.velocity = moveEnemy;
 
