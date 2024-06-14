@@ -41,8 +41,9 @@ public abstract class EntityClass : MonoBehaviour
     public AudioClip[] hurtSound;
     public bool log = false;
     protected static AudioSource otherSounds;
+    protected int redForTicks = 0;
 
-    
+
     public void Spawn()
     {
         GetComponent<Transform>().position = spawnPos;
@@ -58,6 +59,15 @@ public abstract class EntityClass : MonoBehaviour
         if (transform.position.y <= -10)
         {
             die();
+        }
+        if (GetComponent<SpriteRenderer>().color == Color.red)
+        {
+            redForTicks++;
+            if (redForTicks == 25)
+            {
+                GetComponent<SpriteRenderer>().color = Color.white;
+                redForTicks = 0;
+            }
         }
     }
     public bool IsGrounded()
@@ -129,6 +139,10 @@ public abstract class EntityClass : MonoBehaviour
         attackedEntity.removeHealth(attackStrength);
         currentAttackCooldown = attackCooldown;
         attacking = attackLength;
+
+        int attackDir = (this.transform.position.x - attackedEntity.transform.position.x > 0) ? -1 : 1;
+        attackedEntity.rb.velocity = new Vector2(attackDir*10, 6);
+        attackedEntity.GetComponent<SpriteRenderer>().color = Color.red;
     }
     public void removeHealth(int attackStrength)
     {

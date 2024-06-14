@@ -37,11 +37,15 @@ public class Enemy : EntityClass
         transform.rotation = Quaternion.identity;
         horizontal = (Mathf.Abs(rb.velocity.x) < 0.001f) ? 0 : (rb.velocity.x > 0) ? 1 : -1;
 
-        movement();
+        if (GetComponent<SpriteRenderer>().color != Color.red) movement();
+        else
+        {
+            rb.velocity = new Vector2((Math.Abs(rb.velocity.x) > 0.25f) ? rb.velocity.x + (rb.velocity.x < 0 ? 0.25f : -0.25f) : 0, rb.velocity.y);
+        }
 
         if (objectCollider.IsTouching(playerCollider) && canAttack())
         {
-            attackAnotherEntity(player.GetComponent<EntityClass>());
+            attackAnotherEntity(player.GetComponent<Player>());
             if (animator!=null)
             {
                 animator.SetTrigger("attack");

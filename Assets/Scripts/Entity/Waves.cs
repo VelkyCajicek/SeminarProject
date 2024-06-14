@@ -52,11 +52,8 @@ public class Waves : MonoBehaviour
         if (hit.collider == null)
         {
             spawnPos += new Vector2((virtualCameraSize + enemySize.x) * spawnSide * -2, 0);
-            Debug.Log("void spawn prevented");
         }
-        Vector2 newSpawnPos = getGroundFromPos(spawnPos,enemySize);
-        Debug.DrawLine(spawnPos, newSpawnPos,Color.blue);
-        spawnPos = newSpawnPos;
+        spawnPos = getGroundFromPos(spawnPos,enemySize);
 
         return spawnPos;
     }

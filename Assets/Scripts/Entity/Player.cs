@@ -28,6 +28,7 @@ public class Player : EntityClass
 
     void Update()
     {
+        Debug.DrawRay(transform.position,rb.velocity,Color.cyan);
         animator.SetBool("isInAir",isInAir);
         // Locks rotation
         transform.rotation = Quaternion.identity;
@@ -125,7 +126,8 @@ public class Player : EntityClass
     }
     private void FixedUpdate()
     {
-        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+
+        rb.velocity = new Vector2(((GetComponent<SpriteRenderer>().color == Color.red && horizontal == 0) ? ((Math.Abs(rb.velocity.x) > 0.25f) ? rb.velocity.x +(rb.velocity.x < 0? 0.25f:-0.25f) : 0) : horizontal * speed), rb.velocity.y);
         fixedUpdate();
     }
 
