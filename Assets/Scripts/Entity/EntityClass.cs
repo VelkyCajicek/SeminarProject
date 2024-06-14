@@ -82,6 +82,10 @@ public abstract class EntityClass : MonoBehaviour
             isInAir = distance > isInAirThreshold;
             Debug.DrawLine(sendFrom, hit.point, Color.red);
         }
+        else
+        {
+            isInAir = true;
+        }
     }
     public float getDistanceRaycast(Vector2 dir)
     {

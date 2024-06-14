@@ -47,7 +47,7 @@ public class Player : EntityClass
                 float distToEnemy = Vector2.Distance(transform.position, closestEnemy.transform.position);
                 Vector2 dirToEnemy = transform.position - closestEnemy.transform.position;
                 bool facingTowardsEnemy = dirToEnemy.x >= 0 != isFacingRight;
-                if ((distToEnemy <= 4.5 && facingTowardsEnemy) || (distToEnemy <= 1.5 && !facingTowardsEnemy))
+                if ((distToEnemy <= (this.objectCollider.bounds.size.x+closestEnemy.objectCollider.bounds.size.x+1) && facingTowardsEnemy) || (distToEnemy <= 1.5 && !facingTowardsEnemy))
                 {
                     attackAnotherEntity(closestEnemy);
                     playRandomSound(hitEnemySound);

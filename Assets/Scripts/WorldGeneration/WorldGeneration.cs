@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 using Random = UnityEngine.Random;
 
 public class WorldGeneration : MonoBehaviour
@@ -92,6 +93,13 @@ public class WorldGeneration : MonoBehaviour
             if (x == worldSize / 2) // Player spawn
             {
                 spawnPos = new Vector2(x, height + 2);
+
+                //FIXES TOBIS FUCKING BROKEN SPAWNPOS SINCE HES TOO LAZY TO DO IT
+                RaycastHit2D hit = Physics2D.Raycast(spawnPos + new Vector2(0, 1000), -Vector2.up);
+                if (hit.collider != null)
+                {
+                    spawnPos = hit.point;
+                }
             }
             for (int y = 0; y < height; y++)
             {
@@ -194,27 +202,6 @@ public class WorldGeneration : MonoBehaviour
 
         newTile.name = tileSprites[0].name;
         newTile.transform.position = new Vector2(x + 0.5f, y + 0.5f);
-    }
-    int cycle = 0;
-    void FixedUpdate()
-    {
-        cycle++;
-        if (cycle > 1000) cycle = 1;
-        if (cycle % 100 == 0 && Entities.GetComponentsInChildren<Enemy>().Length <=1)
-        {
-            spawnEnemy((Random.Range(0, 100f) > 50) ? EnemySpider : EnemyNormal);//Spawns a random enemy
-        }
-    }
-    public void spawnEnemy(GameObject EnemyObject)
-    {
-        GameObject go = GameObject.Instantiate(EnemyObject);
-        Enemy enemyScript = go.GetComponent<Enemy>();
-        go.SetActive(true);
-        enemyScript.thisObject = go;
-        enemyScript.transform.parent = Entities.transform;
-        enemyScript.spawnPos = spawnPos;
-        enemyScript.Spawn();
-        Debug.Log($"Enemy Spawned");
     }
     public void spawnAmbient()
     {
