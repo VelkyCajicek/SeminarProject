@@ -10,6 +10,7 @@ public class Player : EntityClass
 {
     //IDataPersistenc
     //EntityClass contains all variables etc.
+    public GameObject Terrain;
     private bool isFlying = false;
     public Animator animator;
     public Animation attackAnimation;
@@ -28,7 +29,7 @@ public class Player : EntityClass
 
     void Update()
     {
-        Debug.DrawRay(transform.position,rb.velocity,Color.cyan);
+        Debug.DrawRay(spawnPos, new Vector2(0, 10), Color.red);
         animator.SetBool("isInAir",isInAir);
         // Locks rotation
         transform.rotation = Quaternion.identity;
@@ -50,6 +51,11 @@ public class Player : EntityClass
                 bool facingTowardsEnemy = dirToEnemy.x >= 0 != isFacingRight;
                 if ((distToEnemy <= (this.objectCollider.bounds.size.x+closestEnemy.objectCollider.bounds.size.x+1) && facingTowardsEnemy) || (distToEnemy <= 1.5 && !facingTowardsEnemy))
                 {
+                    if (closestEnemy.currentHealth <= attackStrength)
+                    {
+                        Waves waves = Terrain.GetComponent<Waves>();
+                        waves.enemyKilledByPlayer();
+                    }
                     attackAnotherEntity(closestEnemy);
                     playRandomSound(hitEnemySound);
                 }
@@ -62,6 +68,8 @@ public class Player : EntityClass
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
+            Waves waves = Terrain.GetComponent<Waves>();
+            waves.advanceWave();
             isFlying = !isFlying;
         }
         if (!isFlying)

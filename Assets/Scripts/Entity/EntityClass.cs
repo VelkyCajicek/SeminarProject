@@ -5,6 +5,7 @@ using Random = UnityEngine.Random;
 using UnityEngine;
 using static Unity.VisualScripting.Member;
 using Unity.Burst.CompilerServices;
+using static UnityEditor.PlayerSettings;
 
 public abstract class EntityClass : MonoBehaviour
 {
@@ -51,6 +52,7 @@ public abstract class EntityClass : MonoBehaviour
     }
     protected void fixedUpdate()
     {
+        FixPosition();
         if (currentAttackCooldown > 0) currentAttackCooldown--;
         if (attacking > 0)
         {
@@ -90,7 +92,7 @@ public abstract class EntityClass : MonoBehaviour
         {
             float distance = Mathf.Abs(hit.point.y - sendFrom.y);
             isInAir = distance > isInAirThreshold;
-            Debug.DrawLine(sendFrom, hit.point, Color.red);
+            //Debug.DrawLine(sendFrom, hit.point, Color.red);
         }
         else
         {
@@ -105,7 +107,7 @@ public abstract class EntityClass : MonoBehaviour
         {
             float distX = Mathf.Abs(hit.point.x - sendFrom.x);
             float distY = Mathf.Abs(hit.point.y - sendFrom.y);
-            Debug.DrawLine(sendFrom, hit.point, Color.green);
+            //Debug.DrawLine(sendFrom, hit.point, Color.green);
             return Mathf.Sqrt(distX*distX + distY*distY);
         }
         return float.NaN;
@@ -215,6 +217,29 @@ public abstract class EntityClass : MonoBehaviour
             Collider2D colliderAmbient = ambient.GetComponent<Collider2D>();
             Physics2D.IgnoreCollision(colliderAmbient.GetComponent<Collider2D>(), GetComponent<Collider2D>());
         }
+    }
+    public void FixPosition()
+    {
+        Vector2 posLeft = objectCollider.bounds.min;
+        Vector2 posRight = objectCollider.bounds.max;
+        posRight = new Vector2(posRight.x, posLeft.y);
+
+        Vector2 hitLeft = Vector2.zero;
+        Vector2 hitRight = Vector2.zero;
+
+        RaycastHit2D hit = Physics2D.Raycast(posLeft + new Vector2(0, 1000), -Vector2.up);
+        if (hit.collider != null)
+        {
+            hitLeft = hit.point;
+        }
+        RaycastHit2D hit2 = Physics2D.Raycast(posRight + new Vector2(0, 1000), -Vector2.up);
+        if (hit2.collider != null)
+        {
+            hitRight = hit2.point;
+        }
+        const float tpMargain = 1.5f;
+        if (hitLeft.y - posLeft.y >= tpMargain) transform.position += new Vector3(0, hitLeft.y - posLeft.y, 0);
+        if (hitRight.y - posRight.y >= tpMargain) transform.position += new Vector3(0, hitRight.y - posRight.y, 0);
     }
     public abstract void die();
 }

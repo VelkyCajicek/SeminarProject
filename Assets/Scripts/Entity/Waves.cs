@@ -14,18 +14,59 @@ public class Waves : MonoBehaviour
     public GameObject VirtualCamera;
 
     int cycle = 0;
-    private void Update()
+    public int waveNum = 0;
+    private const int waveEnemyAdd = 5;
+
+    //For Current Wave
+    private int waveEnemySpawnRate = 0;
+    private int waveEnemyMaxNum = 0;
+    private int waveEnemiesKilled = 0;
+    void Start()
     {
-        //getEnemySpawnPos(new Vector2(2.7f, 1.08f));
+        advanceWave();
     }
     void FixedUpdate()
     {
+        if (waveNum == 0) return;
         cycle++;
-        if (cycle > 1000) cycle = 1;
-        if (cycle % 100 == 0 && Entities.GetComponentsInChildren<Enemy>().Length <= 1)
+        if (cycle >= waveEnemySpawnRate && Entities.GetComponentsInChildren<Enemy>().Length <= waveEnemyMaxNum)
         {
+            //TODO HARKONNENS
             spawnEnemy((Random.Range(0, 100f) > 0) ? EnemySpider : EnemyNormal);//Spawns a random enemy
+            cycle = 0;
         }
+    }
+    public int getEnemiesByWave()
+    {
+        return (int) Mathf.Floor((Mathf.Pow((waveNum + 2),2))/10f+waveEnemyAdd);
+    }
+    public int getEnemySpawnRateByWave()
+    {
+        return 4000 / waveEnemyMaxNum;
+    }
+    public void advanceWave()
+    {
+        waveNum++;
+        waveEnemiesKilled = 0;
+        waveEnemyMaxNum = getEnemiesByWave();
+        waveEnemySpawnRate = getEnemySpawnRateByWave();
+        cycle = waveEnemySpawnRate-1000;
+        Debug.Log($"Wave Advanced: {waveNum}_{waveEnemySpawnRate}_{waveEnemyMaxNum}");
+    }
+    public void enemyKilledByPlayer()
+    {
+        waveEnemiesKilled++;
+        Debug.Log($"Enemy Killed: {waveEnemiesKilled} out of {waveEnemyMaxNum}");
+        if (waveEnemiesKilled >= waveEnemyMaxNum)
+        {
+            advanceWave();
+        }
+    }
+    public void updateWaveDisplay()
+    {
+        int enemiesRemaining = waveEnemyMaxNum - waveEnemiesKilled;
+        //Update current wave num
+        //Update enemies in wave remaining - maybe progress bar???
     }
     public void spawnEnemy(GameObject EnemyObject)
     {

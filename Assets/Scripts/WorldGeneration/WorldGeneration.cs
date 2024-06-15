@@ -54,6 +54,7 @@ public class WorldGeneration : MonoBehaviour
     {
         // Terrain spawn
         seed = UnityEngine.Random.Range(-10000, 10000);
+        seed = 8956;
         caveNoiseTexture = new Texture2D(worldSize, worldSize);
         DrawTextures();
 
@@ -92,14 +93,7 @@ public class WorldGeneration : MonoBehaviour
 
             if (x == worldSize / 2) // Player spawn
             {
-                spawnPos = new Vector2(x, height + 2);
-
-                //FIXES TOBIS FUCKING BROKEN SPAWNPOS SINCE HES TOO LAZY TO DO IT
-                RaycastHit2D hit = Physics2D.Raycast(spawnPos + new Vector2(0, 1000), -Vector2.up);
-                if (hit.collider != null)
-                {
-                    spawnPos = hit.point;
-                }
+                spawnPos = new Vector2(x, height+2);
             }
             for (int y = 0; y < height; y++)
             {
