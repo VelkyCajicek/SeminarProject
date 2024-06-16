@@ -51,7 +51,6 @@ public class Enemy : EntityClass
                 animator.SetTrigger("attack");
             }
         }
-
         Flip();
     }
     private void movement()

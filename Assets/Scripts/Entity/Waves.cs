@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
@@ -12,6 +13,9 @@ public class Waves : MonoBehaviour
     public GameObject Ambient;
     public GameObject Entities;
     public GameObject VirtualCamera;
+    public GameObject ProgressBar;
+    public GameObject ProgressBarBorder;
+    public GameObject WaveText;
 
     int cycle = 0;
     public int waveNum = 0;
@@ -24,9 +28,12 @@ public class Waves : MonoBehaviour
     void Start()
     {
         advanceWave();
+        cycle = 400;
+
     }
     void FixedUpdate()
     {
+        RectTransform rectTransform = ProgressBar.GetComponent<RectTransform>();
         if (waveNum == 0) return;
         cycle++;
         if (cycle >= waveEnemySpawnRate && Entities.GetComponentsInChildren<Enemy>().Length <= waveEnemyMaxNum)
@@ -52,6 +59,7 @@ public class Waves : MonoBehaviour
         waveEnemySpawnRate = getEnemySpawnRateByWave();
         cycle = waveEnemySpawnRate-1000;
         Debug.Log($"Wave Advanced: {waveNum}_{waveEnemySpawnRate}_{waveEnemyMaxNum}");
+        updateWaveDisplay();
     }
     public void enemyKilledByPlayer()
     {
@@ -61,12 +69,22 @@ public class Waves : MonoBehaviour
         {
             advanceWave();
         }
+        updateWaveDisplay();
     }
     public void updateWaveDisplay()
     {
         int enemiesRemaining = waveEnemyMaxNum - waveEnemiesKilled;
-        //Update current wave num
-        //Update enemies in wave remaining - maybe progress bar???
+        TextMeshProUGUI textMeshPro = WaveText.GetComponent<TextMeshProUGUI>();
+        textMeshPro.text = "Wave "+ waveNum+":";
+        RectTransform borderTransform = ProgressBarBorder.GetComponent<RectTransform>();
+        RectTransform rectTransform = ProgressBar.GetComponent<RectTransform>();
+        rectTransform.localScale = new Vector3(0.99f * ((float)waveEnemiesKilled / (float)waveEnemyMaxNum), rectTransform.localScale.y, rectTransform.localScale.z);
+        float fillSize = rectTransform.sizeDelta.x * rectTransform.localScale.x;
+        float borderSize = borderTransform.sizeDelta.x * borderTransform.localScale.x;
+        float moveFilling = 340f * (1f - (float) rectTransform.localScale.x);
+        Debug.Log("TESTTTT1: " + rectTransform.localScale.x + "_" + moveFilling + "_" + fillSize);
+
+        ProgressBar.transform.position = new Vector3(-moveFilling + 366f, rectTransform.transform.position.y, rectTransform.transform.position.z);
     }
     public void spawnEnemy(GameObject EnemyObject)
     {

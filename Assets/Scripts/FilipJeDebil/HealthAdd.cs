@@ -7,10 +7,15 @@ public class HealthAdd : MonoBehaviour, IItem
 {
     public int Amount = 10;
     public static Action<int> OnHealthCollect;
+    public GameObject Player;
     
     public void Collect()
     {
-        OnHealthCollect.Invoke(Amount);
+        if (OnHealthCollect != null) OnHealthCollect.Invoke(Amount);
+        else
+        {
+            Player.GetComponent<Player>().Heal(Amount);
+        }
         Destroy(gameObject);
     }
 }

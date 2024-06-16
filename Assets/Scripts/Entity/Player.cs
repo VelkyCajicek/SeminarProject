@@ -49,7 +49,7 @@ public class Player : EntityClass
                 float distToEnemy = Vector2.Distance(transform.position, closestEnemy.transform.position);
                 Vector2 dirToEnemy = transform.position - closestEnemy.transform.position;
                 bool facingTowardsEnemy = dirToEnemy.x >= 0 != isFacingRight;
-                if ((distToEnemy <= (this.objectCollider.bounds.size.x+closestEnemy.objectCollider.bounds.size.x+1) && facingTowardsEnemy) || (distToEnemy <= 1.5 && !facingTowardsEnemy))
+                if ((distToEnemy <= (this.objectCollider.bounds.size.x+closestEnemy.objectCollider.bounds.size.x) && facingTowardsEnemy) || (distToEnemy <= 1.5 && !facingTowardsEnemy))
                 {
                     if (closestEnemy.currentHealth <= attackStrength)
                     {
@@ -69,7 +69,7 @@ public class Player : EntityClass
         if (Input.GetKeyDown(KeyCode.F))
         {
             Waves waves = Terrain.GetComponent<Waves>();
-            waves.advanceWave();
+            waves.enemyKilledByPlayer();
             isFlying = !isFlying;
         }
         if (!isFlying)

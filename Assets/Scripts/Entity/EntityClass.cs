@@ -237,9 +237,10 @@ public abstract class EntityClass : MonoBehaviour
         {
             hitRight = hit2.point;
         }
-        const float tpMargain = 1.5f;
-        if (hitLeft.y - posLeft.y >= tpMargain) transform.position += new Vector3(0, hitLeft.y - posLeft.y, 0);
-        if (hitRight.y - posRight.y >= tpMargain) transform.position += new Vector3(0, hitRight.y - posRight.y, 0);
+        const float tpMargain = 0.8f;
+        const float tpAmount = 0.2f;
+        if (hitLeft.y - posLeft.y >= tpMargain) transform.position += new Vector3(0, tpAmount, 0);
+        if (hitRight.y - posRight.y >= tpMargain) transform.position += new Vector3(0, tpAmount, 0);
     }
     public abstract void die();
 }
