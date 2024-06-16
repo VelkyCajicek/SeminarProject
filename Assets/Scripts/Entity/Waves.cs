@@ -9,7 +9,7 @@ public class Waves : MonoBehaviour
     public GameObject Player;
     public GameObject EnemyNormal;
     public GameObject EnemySpider;
-    public GameObject EnemyHarkonnen;
+    public GameObject EnemyRanged;
     public GameObject Ambient;
     public GameObject Entities;
     public GameObject VirtualCamera;
@@ -25,6 +25,7 @@ public class Waves : MonoBehaviour
     private int waveEnemySpawnRate = 0;
     private int waveEnemyMaxNum = 0;
     private int waveEnemiesKilled = 0;
+    public bool pauseEnemySpawns = false;
     void Start()
     {
         advanceWave();
@@ -35,11 +36,10 @@ public class Waves : MonoBehaviour
     {
         RectTransform rectTransform = ProgressBar.GetComponent<RectTransform>();
         if (waveNum == 0) return;
-        cycle++;
-        if (cycle >= waveEnemySpawnRate && Entities.GetComponentsInChildren<Enemy>().Length <= waveEnemyMaxNum)
+        if (!pauseEnemySpawns) cycle++;
+        if (cycle >= waveEnemySpawnRate && Entities.GetComponentsInChildren<Enemy>().Length <= 0)//waveEnemyMaxNum
         {
-            //TODO HARKONNENS
-            spawnEnemy((Random.Range(0, 100f) > 0) ? EnemySpider : EnemyNormal);//Spawns a random enemy
+            spawnEnemy((Random.Range(0, 100f) > 0) ? EnemyRanged : EnemyNormal);//Spawns a random enemy
             cycle = 0;
         }
     }

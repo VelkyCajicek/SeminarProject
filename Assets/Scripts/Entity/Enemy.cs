@@ -15,6 +15,7 @@ public class Enemy : EntityClass
     public string enemyType;
     public float jumpDistFromWall;
     public Animator animator;
+    public GameObject gun;
     //LootTable
     [Header("Loot")]
     public List<LootItem> lootTable = new List<LootItem>();
@@ -68,20 +69,33 @@ public class Enemy : EntityClass
             {
                 moveEnemy.y = jumpingPower;
             }
-            else if (enemyType == "spider" && getDistanceRaycast(playerDirLeftRight) < jumpDistFromWall)
+            else if ((enemyType == "spider" || enemyType == "ranged") && getDistanceRaycast(playerDirLeftRight) < jumpDistFromWall)
             {//No Grounded check - for climbing
                 moveEnemy.y = jumpingPower;
             }
         }
-        if (enemyType == "spider" && getDistanceRaycast(playerDirLeftRight) > jumpDistFromWall && moveEnemy.y > 0)
+        if ((enemyType == "spider" || enemyType == "ranged") && getDistanceRaycast(playerDirLeftRight) > jumpDistFromWall && moveEnemy.y > 0)
         {
             moveEnemy.y = 0;
         }
 
         moveEnemy.x = (Math.Abs(playerDirection.x) < speed) ? playerDirection.x : (playerDirection.x < 0) ? -speed : speed;
+        /*if (enemyType == "ranged") 
+        {
+            if (distanceFromPlayer <= 10) moveEnemy.x = 0;
+            if (distanceFromPlayer <= 5) moveEnemy.x *= -1;
+        }*/
 
         rb.velocity = moveEnemy;
-
+        if (enemyType == "ranged") AimGun();
+    }
+    private void AimGun()
+    {
+        if (gun == null) return;
+        Vector2 playerDirection = player.transform.position - transform.position;
+        SpriteRenderer gunSprite = gun.GetComponent<SpriteRenderer>();
+        float rotation = (float)Math.Atan((playerDirection.x > 0 ? playerDirection.y : -playerDirection.y) / Math.Abs(playerDirection.x))/2;
+        gunSprite.transform.rotation = new Quaternion(gunSprite.transform.rotation.x, gunSprite.transform.rotation.y, rotation, gunSprite.transform.rotation.w);
     }
     private void FixedUpdate()
     {

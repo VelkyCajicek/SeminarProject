@@ -14,7 +14,7 @@ public class WorldGeneration : MonoBehaviour
     public GameObject Player;
     public GameObject EnemyNormal;
     public GameObject EnemySpider;
-    public GameObject EnemyHarkonnen;
+    public GameObject EnemyRanged;
     public GameObject Ambient;
     public GameObject Entities;
 

@@ -243,15 +243,16 @@ public abstract class EntityClass : MonoBehaviour
     public void FixMovement()
     {
         if (jumping) return;
-        float initialYVelocity = rb.velocity.y;
+        Vector2 initialVelocity = rb.velocity;
         float maxSpeed = speed;
         float currentSpeed = rb.velocity.x + (rb.velocity.y > 0 ? rb.velocity.y*4 : 0);
         if (currentSpeed <= maxSpeed) return;
         float multiplyBy = maxSpeed / currentSpeed;
         if (maxSpeed == float.NaN || currentSpeed == float.NaN || multiplyBy == float.NaN) return;
         Vector2 newVelocity = new Vector2(rb.velocity.x*multiplyBy, rb.velocity.y * multiplyBy);
-        newVelocity.y = initialYVelocity;
+        newVelocity.y = initialVelocity.y;
         rb.velocity = newVelocity;
+        if (initialVelocity != rb.velocity && log) Debug.Log($"Changed From {initialVelocity} to {rb.velocity}");
     }
     public abstract void die();
 }
