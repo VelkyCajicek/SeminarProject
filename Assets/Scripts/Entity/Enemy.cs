@@ -52,6 +52,8 @@ public class Enemy : EntityClass
             }
         }
         Flip();
+        FixPosition();
+        FixMovement();
     }
     private void movement()
     {

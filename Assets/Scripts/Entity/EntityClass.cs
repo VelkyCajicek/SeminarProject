@@ -43,6 +43,7 @@ public abstract class EntityClass : MonoBehaviour
     public bool log = false;
     protected static AudioSource otherSounds;
     protected int redForTicks = 0;
+    protected bool jumping = false;
 
 
     public void Spawn()
@@ -52,7 +53,6 @@ public abstract class EntityClass : MonoBehaviour
     }
     protected void fixedUpdate()
     {
-        FixPosition();
         if (currentAttackCooldown > 0) currentAttackCooldown--;
         if (attacking > 0)
         {
@@ -241,6 +241,21 @@ public abstract class EntityClass : MonoBehaviour
         const float tpAmount = 0.2f;
         if (hitLeft.y - posLeft.y >= tpMargain) transform.position += new Vector3(0, tpAmount, 0);
         if (hitRight.y - posRight.y >= tpMargain) transform.position += new Vector3(0, tpAmount, 0);
+    }
+    public void FixMovement()
+    {
+        if (jumping) return;
+        float initialYVelocity = rb.velocity.y;
+        float maxSpeed = speed;
+        float currentSpeed = rb.velocity.x + (rb.velocity.y > 0 ? rb.velocity.y*4 : 0);//(float)Math.Sqrt(rb.velocity.x* rb.velocity.x + rb.velocity.y* rb.velocity.y)
+        if (currentSpeed <= maxSpeed) return;
+        float multiplyBy = maxSpeed / currentSpeed;
+        if (maxSpeed == float.NaN || currentSpeed == float.NaN || multiplyBy == float.NaN) return;
+        Vector2 newVelocity = new Vector2(rb.velocity.x*multiplyBy, rb.velocity.y * multiplyBy);
+        newVelocity.y = initialYVelocity;
+        //if (!isInAir && newVelocity.y > (jumpingPower / 2)) newVelocity.y = jumpingPower / 3.5f;
+        if (this.log) Debug.Log($"TESTING: {maxSpeed}___{currentSpeed}___{multiplyBy}___{rb.velocity}___{newVelocity}");
+        rb.velocity = newVelocity;
     }
     public abstract void die();
 }

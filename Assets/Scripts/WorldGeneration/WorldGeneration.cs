@@ -54,7 +54,7 @@ public class WorldGeneration : MonoBehaviour
     {
         // Terrain spawn
         seed = UnityEngine.Random.Range(-10000, 10000);
-        seed = 8956;
+        //seed = 8956;
         caveNoiseTexture = new Texture2D(worldSize, worldSize);
         DrawTextures();
 

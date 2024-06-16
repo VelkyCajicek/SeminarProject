@@ -78,13 +78,14 @@ public class Player : EntityClass
             {
                 rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
                 animator.SetTrigger("jump");
+                jumping = true;
             }
             if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
             {
                 rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
+                jumping = true;
             }
-            rb.velocity = new Vector2(Math.Min(rb.velocity.x, speed), rb.velocity.y);
-
+            if (rb.velocity.y < 0 && !isInAir) jumping = false;
             updateIsInAir();
         }
         else //Flying
@@ -131,11 +132,14 @@ public class Player : EntityClass
             footSteps.Stop();
         }
 
+        FixPosition();
+        FixMovement();
     }
     private void FixedUpdate()
     {
 
         rb.velocity = new Vector2(((GetComponent<SpriteRenderer>().color == Color.red && horizontal == 0) ? ((Math.Abs(rb.velocity.x) > 0.25f) ? rb.velocity.x +(rb.velocity.x < 0? 0.25f:-0.25f) : 0) : horizontal * speed), rb.velocity.y);
+        FixMovement();
         fixedUpdate();
     }
 
