@@ -17,6 +17,10 @@ public class Waves : MonoBehaviour
     public GameObject ProgressBarBorder;
     public GameObject WaveText;
 
+    public GameObject thisObject;
+    protected static AudioSource otherSounds;
+    public AudioClip[] waveComplete;
+
     int cycle = 0;
     public int waveNum = 0;
     private const int waveEnemyAdd = 5;
@@ -37,9 +41,10 @@ public class Waves : MonoBehaviour
         RectTransform rectTransform = ProgressBar.GetComponent<RectTransform>();
         if (waveNum == 0) return;
         if (!pauseEnemySpawns) cycle++;
-        if (cycle >= waveEnemySpawnRate && Entities.GetComponentsInChildren<Enemy>().Length <= 0)//waveEnemyMaxNum
+        if (cycle >= waveEnemySpawnRate && Entities.GetComponentsInChildren<Enemy>().Length <= waveEnemyMaxNum)
         {
-            spawnEnemy((Random.Range(0, 100f) > 0) ? EnemyRanged : EnemyNormal);//Spawns a random enemy
+            float rnd = Random.Range(0, 100f);
+            spawnEnemy((rnd < 33.3f) ? EnemyNormal : (rnd < 66.6f)?EnemySpider:EnemyRanged);//Spawns a random enemy
             cycle = 0;
         }
     }
@@ -58,13 +63,12 @@ public class Waves : MonoBehaviour
         waveEnemyMaxNum = getEnemiesByWave();
         waveEnemySpawnRate = getEnemySpawnRateByWave();
         cycle = waveEnemySpawnRate/2;
-        Debug.Log($"Wave Advanced: {waveNum}_{waveEnemySpawnRate}_{waveEnemyMaxNum}");
         updateWaveDisplay();
+        if (waveNum != 1) playRandomSound(waveComplete);
     }
     public void enemyKilledByPlayer()
     {
         waveEnemiesKilled++;
-        Debug.Log($"Enemy Killed: {waveEnemiesKilled} out of {waveEnemyMaxNum}");
         if (waveEnemiesKilled >= waveEnemyMaxNum)
         {
             advanceWave();
@@ -95,7 +99,6 @@ public class Waves : MonoBehaviour
         enemyScript.spawnPos = getEnemySpawnPos(enemyScript.objectCollider.bounds.size);
         Debug.Log(enemyScript.objectCollider.bounds.size);
         enemyScript.Spawn();
-        Debug.Log($"Enemy Spawned");
     }
     public Vector2 getEnemySpawnPos(Vector2 enemySize)
     {
@@ -131,5 +134,24 @@ public class Waves : MonoBehaviour
             hitLeft = hit2.point;
         }
         return new Vector2(pos.x, (hitLeft.y > hitRight.y) ? hitLeft.y : hitRight.y + enemySize.y);
+    }
+    public void playRandomSound(AudioClip[] sounds, float volume = 1f)
+    {
+        if (sounds.Length == 0) return;
+        AudioClip audio = sounds[Random.Range(0, sounds.Length)];
+        playSound(otherSounds, audio);
+    }
+    public void playSound(AudioSource source, AudioClip sound, float volume = 1f)
+    {
+        if (source == null)
+        {
+            source = thisObject.AddComponent<AudioSource>();
+            source.playOnAwake = false;
+            source.loop = false;
+        }
+
+        source.clip = sound;
+        source.volume = volume;
+        source.Play();
     }
 }

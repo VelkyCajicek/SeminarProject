@@ -25,11 +25,5 @@ public class FixSizes : MonoBehaviour
 
         //GroundCheckPlayer.transform.position = new Vector3(0, -0.6f);
 
-        // Enemy
-        Enemy.transform.position = new Vector3(6, 0, 0);
-        collider2DEnemy.size = new Vector3(2, 3);
-        collider2DEnemy.offset = new Vector3(0, 0);
-        
-        //GroundCheckEnemy.transform.position = new Vector3(0.083f, -1, 44f);
     }
 }

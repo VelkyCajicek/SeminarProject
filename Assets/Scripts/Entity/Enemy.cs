@@ -61,6 +61,7 @@ public class Enemy : EntityClass
     }
     private void movement()
     {
+
         distanceFromPlayer = Vector2.Distance(transform.position, player.transform.position);
         Vector2 playerDirection = player.transform.position - transform.position;
         Vector2 moveEnemy = rb.velocity;
@@ -72,19 +73,21 @@ public class Enemy : EntityClass
             {
                 moveEnemy.x = 0;
                 horizontal = (Mathf.Abs(playerDirection.x) < 0.001f) ? 0 : (playerDirection.x > 0) ? 1 : -1;
-                RaycastHit2D hit = Physics2D.Raycast(transform.position, playerDirection);
-                float distX = Mathf.Abs(hit.point.x - transform.position.x);
-                float distY = Mathf.Abs(hit.point.y - transform.position.y);
+                SpriteRenderer gunSprite = gun.GetComponent<SpriteRenderer>();
+                Vector2 playerDirectionFromGun = player.transform.position - gunSprite.transform.position;
+                RaycastHit2D hit = Physics2D.Raycast(gunSprite.transform.position, playerDirectionFromGun);
+                float distX = Mathf.Abs(hit.point.x - gunSprite.transform.position.x);
+                float distY = Mathf.Abs(hit.point.y - gunSprite.transform.position.y);
                 float shootRayDist =  Mathf.Sqrt(distX * distX + distY * distY);
                 if (hit.collider == null || shootRayDist >= distanceFromPlayer)
                 {
-                    drawLaser();//TEMP
+                    drawLaser();
+                    AimGun();
                     currentAttackCooldown--;
                     if (currentAttackCooldown <= 0)
                     {
                         //Ranged Attack
-                        drawLaser();//TEMP
-                        Debug.Log("SHOOT");
+                        drawLaser();
                         attackAnotherEntity(player.GetComponent<Player>());
                         if (animator != null)
                         {
@@ -95,13 +98,15 @@ public class Enemy : EntityClass
                 else
                 {
                     currentAttackCooldown = attackCooldown;
-                    gunProjectile.GetComponent<SpriteRenderer>().transform.localScale = new Vector2(0, gunProjectile.GetComponent<SpriteRenderer>().transform.localScale.y);
+                    gunProjectile.SetActive(false);
+                    gun.SetActive(false);
                 }
             }
             else
             {
                 currentAttackCooldown = attackCooldown;
-                gunProjectile.GetComponent<SpriteRenderer>().transform.localScale = new Vector2(0, gunProjectile.GetComponent<SpriteRenderer>().transform.localScale.y);
+                gunProjectile.SetActive(false);
+                gun.SetActive(false);
             }
             if (distanceFromPlayer <= 8) moveEnemy.x *= -1;
         }
@@ -127,21 +132,25 @@ public class Enemy : EntityClass
         
 
         rb.velocity = moveEnemy;
-        if (enemyType == "ranged") AimGun();
     }
     private void AimGun()
     {
+        gun.SetActive(true);
         if (gun == null) return;
-        Vector2 playerDirection = player.transform.position - transform.position;
         SpriteRenderer gunSprite = gun.GetComponent<SpriteRenderer>();
+        Vector2 playerDirection = player.transform.position - gunSprite.transform.position;
         float rotation = (float)Math.Atan((playerDirection.x > 0 ? playerDirection.y : -playerDirection.y) / Math.Abs(playerDirection.x))/2;
         gunSprite.transform.rotation = new Quaternion(gunSprite.transform.rotation.x, gunSprite.transform.rotation.y, rotation, gunSprite.transform.rotation.w);
+        gunSprite.transform.localScale = new Vector2(1f,1f);
     }
     private void drawLaser()
     {
+        gunProjectile.SetActive(true);
+        gun.SetActive(true);
         if (gunProjectile == null) return;
-        Vector2 playerDirection = player.transform.position - (transform.position + new Vector3(0f, 0.2f));
+        SpriteRenderer gunSprite = gun.GetComponent<SpriteRenderer>();
         SpriteRenderer gunLaserSprite = gunProjectile.GetComponent<SpriteRenderer>();
+        Vector2 playerDirection = player.transform.position - (gunSprite.transform.position);
         float rotation = (float)Math.Atan((playerDirection.x > 0 ? playerDirection.y : -playerDirection.y) / Math.Abs(playerDirection.x)) / 2;
         gunLaserSprite.transform.rotation = new Quaternion(gunLaserSprite.transform.rotation.x, gunLaserSprite.transform.rotation.y, rotation, gunLaserSprite.transform.rotation.w);
 
@@ -149,8 +158,8 @@ public class Enemy : EntityClass
 
         float playerDist = Mathf.Sqrt(playerDirection.x * playerDirection.x + playerDirection.y * playerDirection.y);
         //Pos
-        gunLaserSprite.transform.position = (player.transform.position + transform.position + new Vector3(0f, 0f))/2;
-        gunLaserSprite.transform.localScale = new Vector2(playerDist/9.75f, gunLaserSprite.transform.localScale.y);
+        gunLaserSprite.transform.position = (player.transform.position + gunSprite.transform.position + new Vector3(0f, 0f))/2;
+        gunLaserSprite.transform.localScale = new Vector2(playerDist/50f, gunLaserSprite.transform.localScale.y);
     }
     private void FixedUpdate()
     {
