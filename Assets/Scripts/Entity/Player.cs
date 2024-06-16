@@ -29,7 +29,6 @@ public class Player : EntityClass
 
     void Update()
     {
-        Debug.DrawRay(spawnPos, new Vector2(0, 10), Color.red);
         animator.SetBool("isInAir",isInAir);
         // Locks rotation
         transform.rotation = Quaternion.identity;

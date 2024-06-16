@@ -92,7 +92,6 @@ public abstract class EntityClass : MonoBehaviour
         {
             float distance = Mathf.Abs(hit.point.y - sendFrom.y);
             isInAir = distance > isInAirThreshold;
-            //Debug.DrawLine(sendFrom, hit.point, Color.red);
         }
         else
         {
@@ -107,7 +106,6 @@ public abstract class EntityClass : MonoBehaviour
         {
             float distX = Mathf.Abs(hit.point.x - sendFrom.x);
             float distY = Mathf.Abs(hit.point.y - sendFrom.y);
-            //Debug.DrawLine(sendFrom, hit.point, Color.green);
             return Mathf.Sqrt(distX*distX + distY*distY);
         }
         return float.NaN;
@@ -247,14 +245,12 @@ public abstract class EntityClass : MonoBehaviour
         if (jumping) return;
         float initialYVelocity = rb.velocity.y;
         float maxSpeed = speed;
-        float currentSpeed = rb.velocity.x + (rb.velocity.y > 0 ? rb.velocity.y*4 : 0);//(float)Math.Sqrt(rb.velocity.x* rb.velocity.x + rb.velocity.y* rb.velocity.y)
+        float currentSpeed = rb.velocity.x + (rb.velocity.y > 0 ? rb.velocity.y*4 : 0);
         if (currentSpeed <= maxSpeed) return;
         float multiplyBy = maxSpeed / currentSpeed;
         if (maxSpeed == float.NaN || currentSpeed == float.NaN || multiplyBy == float.NaN) return;
         Vector2 newVelocity = new Vector2(rb.velocity.x*multiplyBy, rb.velocity.y * multiplyBy);
         newVelocity.y = initialYVelocity;
-        //if (!isInAir && newVelocity.y > (jumpingPower / 2)) newVelocity.y = jumpingPower / 3.5f;
-        if (this.log) Debug.Log($"TESTING: {maxSpeed}___{currentSpeed}___{multiplyBy}___{rb.velocity}___{newVelocity}");
         rb.velocity = newVelocity;
     }
     public abstract void die();

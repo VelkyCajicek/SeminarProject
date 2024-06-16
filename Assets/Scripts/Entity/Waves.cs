@@ -49,7 +49,7 @@ public class Waves : MonoBehaviour
     }
     public int getEnemySpawnRateByWave()
     {
-        return 4000 / waveEnemyMaxNum;
+        return 2000 / waveEnemyMaxNum;
     }
     public void advanceWave()
     {
@@ -57,7 +57,7 @@ public class Waves : MonoBehaviour
         waveEnemiesKilled = 0;
         waveEnemyMaxNum = getEnemiesByWave();
         waveEnemySpawnRate = getEnemySpawnRateByWave();
-        cycle = waveEnemySpawnRate-1000;
+        cycle = waveEnemySpawnRate/2;
         Debug.Log($"Wave Advanced: {waveNum}_{waveEnemySpawnRate}_{waveEnemyMaxNum}");
         updateWaveDisplay();
     }
@@ -82,7 +82,6 @@ public class Waves : MonoBehaviour
         float fillSize = rectTransform.sizeDelta.x * rectTransform.localScale.x;
         float borderSize = borderTransform.sizeDelta.x * borderTransform.localScale.x;
         float moveFilling = 340f * (1f - (float) rectTransform.localScale.x);
-        Debug.Log("TESTTTT1: " + rectTransform.localScale.x + "_" + moveFilling + "_" + fillSize);
 
         ProgressBar.transform.position = new Vector3(-moveFilling + 366f, rectTransform.transform.position.y, rectTransform.transform.position.z);
     }
