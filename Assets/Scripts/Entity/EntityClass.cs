@@ -20,7 +20,8 @@ public abstract class EntityClass : MonoBehaviour
     public int attackLength;
     public bool isInAir = false;
     public float isInAirThreshold;
-    
+    public bool customAttackCooldown = false;
+
 
 
     public int currentHealth;
@@ -40,6 +41,7 @@ public abstract class EntityClass : MonoBehaviour
     public AudioSource footSteps;
     public AudioClip[] deathSound;
     public AudioClip[] hurtSound;
+    public AudioClip[] attackSound;
     public bool log = false;
     protected static AudioSource otherSounds;
     protected int redForTicks = 0;
@@ -53,7 +55,7 @@ public abstract class EntityClass : MonoBehaviour
     }
     protected void fixedUpdate()
     {
-        if (currentAttackCooldown > 0) currentAttackCooldown--;
+        if (currentAttackCooldown > 0 && !customAttackCooldown) currentAttackCooldown--;
         if (attacking > 0)
         {
             attacking--;
@@ -100,13 +102,16 @@ public abstract class EntityClass : MonoBehaviour
     }
     public float getDistanceRaycast(Vector2 dir)
     {
-        Vector2 sendFrom = getFeetPos();
+        return getDistanceRaycast(getFeetPos(), dir);
+    }
+    public float getDistanceRaycast(Vector2 sendFrom, Vector2 dir)
+    {
         RaycastHit2D hit = Physics2D.Raycast(sendFrom, dir);
         if (hit.collider != null)
         {
             float distX = Mathf.Abs(hit.point.x - sendFrom.x);
             float distY = Mathf.Abs(hit.point.y - sendFrom.y);
-            return Mathf.Sqrt(distX*distX + distY*distY);
+            return Mathf.Sqrt(distX * distX + distY * distY);
         }
         return float.NaN;
     }
@@ -136,6 +141,7 @@ public abstract class EntityClass : MonoBehaviour
     }
     public void attackAnotherEntity(EntityClass attackedEntity)
     {
+        playRandomSound(attackSound);
         attackedEntity.removeHealth(attackStrength);
         currentAttackCooldown = attackCooldown;
         attacking = attackLength;
@@ -252,7 +258,6 @@ public abstract class EntityClass : MonoBehaviour
         Vector2 newVelocity = new Vector2(rb.velocity.x*multiplyBy, rb.velocity.y * multiplyBy);
         newVelocity.y = initialVelocity.y;
         rb.velocity = newVelocity;
-        if (initialVelocity != rb.velocity && log) Debug.Log($"Changed From {initialVelocity} to {rb.velocity}");
     }
     public abstract void die();
 }

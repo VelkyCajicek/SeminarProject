@@ -15,7 +15,6 @@ public class Player : EntityClass
     public Animator animator;
     public Animation attackAnimation;
     public AudioClip[] missAttackSound;
-    public AudioClip[] hitEnemySound;
     private void Awake() // Awake functions run first so therefore we get the size of the map before assigning it anywhere
     {
         GetComponent<Transform>().position = spawnPos;
@@ -56,7 +55,6 @@ public class Player : EntityClass
                         waves.enemyKilledByPlayer();
                     }
                     attackAnotherEntity(closestEnemy);
-                    playRandomSound(hitEnemySound);
                 }
             }
             if (attacking <= 0)
